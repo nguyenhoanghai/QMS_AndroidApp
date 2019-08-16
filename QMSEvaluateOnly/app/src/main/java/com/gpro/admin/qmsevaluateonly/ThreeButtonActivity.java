@@ -334,6 +334,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                                                     //endregion
 
                                                     // region Send SMS
+
                                                     try{
                                                         JSONArray jsonArrSMS = response.optJSONArray("SMS");
                                                         if (jsonArrSMS != null && jsonArrSMS.length() > 0) {

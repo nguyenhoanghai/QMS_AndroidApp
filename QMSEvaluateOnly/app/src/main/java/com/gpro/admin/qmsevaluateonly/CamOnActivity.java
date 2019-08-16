@@ -129,6 +129,7 @@ Thread threadSTT = null,guiSMSThread = null;
                                                         startActivity(intent);
                                                     }
                                                     // region Send SMS
+
                                                     try{
                                                         JSONArray jsonArrSMS = response.optJSONArray("SMS");
                                                         if (jsonArrSMS != null && jsonArrSMS.length() > 0) {

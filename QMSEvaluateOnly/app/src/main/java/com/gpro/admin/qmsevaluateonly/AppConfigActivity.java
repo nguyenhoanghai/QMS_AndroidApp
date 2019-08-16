@@ -28,7 +28,7 @@ public class AppConfigActivity extends AppCompatActivity {
     Spinner lvAppType;
     Button btnSave;
     SharedPreferences sharedPreferences;
-    String[] arrAppType ={"3 nút đánh giá","4 nút đánh giá","Màn hình cấp phiếu","đánh giá mẫu 3","Màn hình Quầy"};
+    String[] arrAppType ={"3 nút đánh giá","4 nút đánh giá","Màn hình cấp phiếu","đánh giá mẫu 3","Màn hình Quầy","Màn hình cấp phiếu 2","Màn hình cấp phiếu 3"};
     ArrayAdapter appTypeAdapter ;
     Integer appType = 0;
     Switch aSwitch, swSendSMS;
@@ -107,16 +107,25 @@ public class AppConfigActivity extends AppCompatActivity {
         lvAppType.setSelection( appType  );
 
         Boolean isFirst = sharedPreferences.getBoolean("IS_FIRTS_LAUNCHER", true);
-
+        Intent intent;
+        String hold;
    switch (appType.intValue() ){
             case 0:
-             Intent intent = getIntent();
-               String hold =   intent.getStringExtra("hold" )  ;
+               intent = getIntent();
+                 hold =   intent.getStringExtra("hold" )  ;
              if(hold == null && !isFirst.booleanValue() ){
                   intent = new Intent(AppConfigActivity.this, ThreeButtonActivity.class);
                     startActivity(intent);
                }
                 break;
+       case 5:
+             intent = getIntent();
+             hold =   intent.getStringExtra("hold" )  ;
+           if(hold == null && !isFirst.booleanValue() ){
+               intent = new Intent(AppConfigActivity.this, PrintTicket_2Activity.class);
+               startActivity(intent);
+           }
+           break;
          /*   case 1:
                 intent = new Intent(AppConfigActivity.this, FourButtonActivity.class);
                 startActivity(intent);
@@ -124,11 +133,11 @@ public class AppConfigActivity extends AppCompatActivity {
             case 2:
                 intent = new Intent(AppConfigActivity.this, PrintTicketActivity.class);
                 startActivity(intent);
-                break;
-            case 3:
-                intent = new Intent(AppConfigActivity.this, DanhGiaActivity.class);
-                startActivity(intent);
                 break;*/
+            case 6:
+                intent = new Intent(AppConfigActivity.this, PrintTicket_3Activity.class);
+                startActivity(intent);
+                break;
         }
 
         btnSave = (Button) findViewById(R.id.btnSave);
@@ -186,6 +195,14 @@ public class AppConfigActivity extends AppCompatActivity {
                             intent = new Intent(AppConfigActivity.this, CountersEventActivity.class);
                             startActivity(intent);
                             break;
+                        case 5:
+                            intent = new Intent(AppConfigActivity.this, PrintTicket_2Activity.class);
+                            startActivity(intent);
+                            break;
+                        case 6:
+                            intent = new Intent(AppConfigActivity.this, PrintTicket_3Activity.class);
+                            startActivity(intent);
+                            break;
                     }
                 }
             }
@@ -216,6 +233,10 @@ public class AppConfigActivity extends AppCompatActivity {
                     intent = new Intent(AppConfigActivity.this, CountersEventActivity.class);
                     startActivity(intent);
                     break;
+                case 5:
+                    intent = new Intent(AppConfigActivity.this, PrintTicket_2Activity.class);
+                    startActivity(intent);
+                    break;
             }
             return true;
         }
@@ -241,6 +262,10 @@ public class AppConfigActivity extends AppCompatActivity {
                 break;
             case R.id.mPrinter:
                 intent = new Intent(AppConfigActivity.this, PrintTicketActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.mPrinter2:
+                intent = new Intent(AppConfigActivity.this, PrintTicket_2Activity.class);
                 startActivity(intent);
                 break;
             case R.id.mCounterEvent:

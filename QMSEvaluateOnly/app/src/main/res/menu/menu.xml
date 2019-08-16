@@ -22,4 +22,8 @@
         android:id="@+id/mExit"
         android:orderInCategory="4"
         />
+    <item android:title="Màn hình cấp phiếu 2"
+        android:id="@+id/mPrinter2"
+        android:orderInCategory="5"
+        />
 </menu>
