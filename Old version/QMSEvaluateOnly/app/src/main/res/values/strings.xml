@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Hệ thống đánh giá QMS</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="appType_prompt">Chọn loại ứng dụng</string>
+    <string-array name="arrAppType">
+        <item>3 nút đánh giá</item>
+        <item>4 nút đánh giá</item>
+    </string-array>
+</resources>

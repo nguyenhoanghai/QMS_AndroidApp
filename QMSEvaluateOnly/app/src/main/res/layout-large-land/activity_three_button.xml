@@ -105,6 +105,19 @@ android:layout_gravity="center_vertical"
                 android:textSize="30dp"
                 android:textStyle="bold" />
         </LinearLayout>
+    <Button
+        android:id="@+id/btnkhac"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_weight="25"
+        android:background="@color/colorAccent"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:text="ý kiến KHÁC"
+        android:textColor="#fff"
+        android:textSize="30dp"  />
 
     <TextView
         android:id="@+id/lbTenNV"

@@ -71,7 +71,9 @@
         <activity android:name=".CountersEventActivity" />
         <activity android:name=".PrintTicket_2Activity" />
         <activity android:name=".PrintTicket_3Activity" />
-        <activity android:name=".CustomListViewActivity"></activity>
+        <activity android:name=".CustomListViewActivity" />
+        <activity android:name=".DGKhacActivity" />
+        <activity android:name=".HienThiQuay"></activity>
     </application>
 
 </manifest>

@@ -58,7 +58,7 @@ import java.net.URL;
 public class ThreeButtonActivity extends AppCompatActivity implements MessageListener {
 
      String IPAddress, UserName, Password, url,  requireLabel,appType;
-    Button  btn1, btn2, btn3 ;
+    Button  btn1, btn2, btn3, btnKhac ;
     TextView lbChuChay,lbTitle,lbTenNV;
     ImageView imgAvatar;
     Integer useQMS=0, number =0, sendSMS=0;
@@ -116,7 +116,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                 //region
                 if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
                     try {
-                        String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_1&&num=" + number + "&&isUseQMS=" + useQMS);
+                        String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_1&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
                         RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
                         JsonObjectRequest jRequest = new JsonObjectRequest(
                                 Request.Method.GET, str, null,
@@ -168,7 +168,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
             public void onClick(View v) {
                 if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
                     //region
-                    String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_2&&num=" + number + "&&isUseQMS=" + useQMS);
+                    String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_2&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
                     RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
                     JsonObjectRequest jRequest = new JsonObjectRequest(
                             Request.Method.GET, str, null,
@@ -218,7 +218,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
             public void onClick(View v) {
                 if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
                 //region
-                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_3&&num=" + number + "&&isUseQMS=" + useQMS);
+                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_3&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
                 RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
                 JsonObjectRequest jRequest = new JsonObjectRequest(
                         Request.Method.GET, str, null,
@@ -257,6 +257,22 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                 else
                     Toast.makeText(ThreeButtonActivity.this, "Hiện tại đang không có giao dịch nên không thể đánh giá được.", Toast.LENGTH_SHORT).show();
         }
+        });
+        //endregion
+
+        //region init button khac
+        btnKhac = (Button)findViewById(R.id.btnkhac);
+        btnKhac.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(ThreeButtonActivity.this, DGKhacActivity.class);
+                intent.putExtra("ip",IPAddress);
+                intent.putExtra("name",UserName);
+                intent.putExtra("pass",Password);
+                intent.putExtra("num",number.toString());
+                intent.putExtra("appType",appType);
+                startActivity(intent);
+            }
         });
         //endregion
 
@@ -632,6 +648,10 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                     break;
                 case "4":
                     intent = new Intent(ThreeButtonActivity.this, CountersEventActivity.class);
+                    startActivity(intent);
+                    break;
+                case "7":
+                    intent = new Intent(ThreeButtonActivity.this, HienThiQuay.class);
                     startActivity(intent);
                     break;
             }

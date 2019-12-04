@@ -49,11 +49,15 @@ public class CountersEventActivity extends AppCompatActivity {
             FONT_SIZE=12,
             FONT_SIZE_STT=12 ;
     Integer number = 0;
-    private  static ArrayList<Integer> requestArr ;
+    private  static ArrayList<Integer> requestArr,
+            waitResponseButtons;
+
     RequestQueue mRequestQueue;
     String IPAddress="" ,
             appType="",
             urlPath  ="",
+    hexCode ="",
+    actionParam="",
             text1="",
             text2="";
     static Button [] buttonArr;
@@ -69,6 +73,7 @@ public class CountersEventActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_counters_event);
         requestArr = new ArrayList<Integer>();
+        waitResponseButtons = new ArrayList<Integer>();
         // Instantiate the cache
         final Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
         // Set up the network to use HttpURLConnection as the HTTP client.
@@ -80,33 +85,63 @@ public class CountersEventActivity extends AppCompatActivity {
         GenerateButton();
     }
 
-    public void GridButton_Click(String equipCode){
-        //Toast.makeText(this,(""+equipCode+ " - 8B"),Toast.LENGTH_SHORT).show();
+    public void GridButton_Click(final String equipCode){
+        boolean isWait = false;
+        for(int i = 0; i < waitResponseButtons.size();i++ ){
+            if(Integer.parseInt(equipCode) == waitResponseButtons.get(i)){
+                isWait = true;
+            }
+        }
+        if(isWait == true){
+            Toast.makeText(CountersEventActivity.this,(""+equipCode+ " đã được nhấn và đang được xử lý vui lòng chờ."),Toast.LENGTH_LONG).show();
+        }
+        else {
+            //Toast.makeText(this,(""+equipCode+ " - 8B"),Toast.LENGTH_SHORT).show();
+            waitResponseButtons.add(Integer.parseInt(equipCode));
+            String str = (IPAddress + "/api/serviceapi/CounterEvent?counterId=" + equipCode + "&action="+hexCode+"&param="+actionParam);
+            RequestQueue rqQue = Volley.newRequestQueue(CountersEventActivity.this);
+            JsonObjectRequest jRequest = new JsonObjectRequest(
+                    Request.Method.GET, str, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            int index = -1;
+                            for(int i = 0; i < waitResponseButtons.size();i++ ){
+                                if(Integer.parseInt(equipCode) == waitResponseButtons.get(i)){
+                                    index = i;
+                                     }
+                            }
+                            if(index >= 0){
+                                waitResponseButtons.remove(index);
+                            }
 
-        String str = (IPAddress + "/api/serviceapi/CounterEvent?counterId=" + equipCode + "&&action=8B"   );
-        RequestQueue rqQue = Volley.newRequestQueue(CountersEventActivity.this);
-        JsonObjectRequest jRequest = new JsonObjectRequest(
-                Request.Method.GET, str, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Boolean rs = response.optBoolean("IsSuccess");
-                        if (rs) {
+                            Boolean rs = response.optBoolean("IsSuccess");
+                            if (rs) {
 
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            int index = -1;
+                            for(int i = 0; i < waitResponseButtons.size();i++ ){
+                                if(Integer.parseInt(equipCode) == waitResponseButtons.get(i)){
+                                    index = i;
+                                }
+                            }
+                            if(index >= 0){
+                                waitResponseButtons.remove(index);
+                            }
+                            Toast.makeText(CountersEventActivity.this, "Không kết nối được với máy chủ.", Toast.LENGTH_SHORT).show();
                         }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(CountersEventActivity.this, "Không kết nối được với máy chủ.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-        jRequest.setShouldCache(false);
-        jRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        // rqQue.add(jRequest);
-        mRequestQueue.add(jRequest);
+            );
+            jRequest.setShouldCache(false);
+            jRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            // rqQue.add(jRequest);
+            mRequestQueue.add(jRequest);
+        }
     }
 
     public void GenerateButton(){
@@ -268,12 +303,18 @@ public class CountersEventActivity extends AppCompatActivity {
                     intent = new Intent(CountersEventActivity.this, DanhGiaActivity.class);
                     startActivity(intent);
                     break;
+                case "7":
+                    intent = new Intent(CountersEventActivity.this, HienThiQuay.class);
+                    startActivity(intent);
+                    break;
             }
             IPAddress = "http://" + sharedPreferences.getString("IP", "0.0.0.0");
             NUM_COL = (Integer.parseInt(sharedPreferences.getString("Cot", "5")));
             NUM_ROW = (Integer.parseInt(sharedPreferences.getString("Dong", "5")));
             FONT_SIZE = (Integer.parseInt(sharedPreferences.getString("SizeNext", "12")));
             FONT_SIZE_STT = (Integer.parseInt(sharedPreferences.getString("SizeSTTNext", "12")));
+            hexCode =  sharedPreferences.getString("HexCode", "8B") ;
+            actionParam =  sharedPreferences.getString("ActionParam", "00,00") ;
         }
     }
 
@@ -282,6 +323,7 @@ public class CountersEventActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             isStop = true;
             Intent intent = new Intent(CountersEventActivity.this, AppConfigActivity.class);
+            intent.putExtra("hold","1");
             startActivity(intent);
             return true;
         }

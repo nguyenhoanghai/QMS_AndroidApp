@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Màn hình Đánh giá"
+        android:id="@+id/mEvaluate"
+        android:orderInCategory="1"
+        />
+  <item android:title="Màn hình cấp phiếu"
+        android:id="@+id/mPrinter"
+        android:orderInCategory="1"
+        />
+    <item android:title="Cấu hình hệ thống"
+        android:id="@+id/mConfig"
+        android:orderInCategory="1"
+        />
+    <item android:title="Thoát"
+        android:id="@+id/mExit"
+        android:orderInCategory="2"
+        />
+</menu>

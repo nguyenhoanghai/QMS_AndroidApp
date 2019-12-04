@@ -95,17 +95,6 @@ ImageView logo;
         //hide thanh action bar to fullscreen
         getSupportActionBar().hide();
         setContentView(R.layout.activity_print_ticket_2);
-        /*
-        for (int i = 0 ; i < 15 ; i++){
-            services.add(new ServiceModel("Service Name "+i , "00:00:00", i));
-        }
-        listview = (ListView)findViewById(R.id.listview);
-        listAdapter = new ListAdapter(this,services);
-        listview.setAdapter(listAdapter);
-        */
-
-
-
         // Instantiate the cache
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
         // Set up the network to use HttpURLConnection as the HTTP client.
@@ -154,63 +143,7 @@ ImageView logo;
                                     // e.printStackTrace();
                                 }
                             }
-
                             InitListView();
-                           /*
-                            int index = 0;
-                            TableLayout tb = (TableLayout)findViewById(R.id.tb);
-                            for (int i=0;i< NUM_ROW;i++){
-                                TableRow tableRow = new TableRow(PrintTicket_2Activity.this);
-                                tableRow.setLayoutParams(new TableLayout.LayoutParams(
-                                        TableLayout.LayoutParams.MATCH_PARENT,
-                                        TableLayout.LayoutParams.MATCH_PARENT,
-                                        1.0f
-                                ));
-                                tb.addView(tableRow);
-                                for (int ii=0;ii<NUM_COL;ii++){
-                                    jsonObject = null;
-                                    try {
-                                        jsonObject = response.getJSONObject(index);
-                                    } catch (JSONException e) {
-                                        // e.printStackTrace();
-                                    }
-                                    if(jsonObject != null){
-                                        final int row = i, col = ii;
-                                        final String equipCode = jsonObject.optString("Id");
-                                        final String thoigian = jsonObject.optString("Code");
-                                        number = jsonObject.optInt("Data");
-                                       // requestArr.add(Integer.parseInt(equipCode));
-                                        buttonArr[index] = new Button(PrintTicket_2Activity.this);
-                                        buttonArr[index].setLayoutParams(new TableRow.LayoutParams(
-                                                0,
-                                                TableRow.LayoutParams.MATCH_PARENT,
-                                                1.0f
-                                        ));
-                                        buttonArr[index].setTextSize(FONT_SIZE);
-                                        buttonArr[index].setPadding(10,0,10,0);
-                                       String text1 = jsonObject.optString("Name");
-                                     //  String text2 = "" ;//(number.intValue()+"");
-                                        //   spannableString =new SpannableString(text1 + "\n" + text2);
-                                           spannableString =new SpannableString(text1  );
-                                        //  spannableString.setSpan(new ForegroundColorSpan(Color.GREEN), 0, text1.length(), 0);
-                                        spannableString.setSpan(new AbsoluteSizeSpan(FONT_SIZE), 0, text1.length(), 0);
-                                         spannableString.setSpan(new ForegroundColorSpan(Color.RED), text1.length(), spannableString.length(), 0);
-                                         spannableString.setSpan(new AbsoluteSizeSpan(FONT_SIZE_STT), text1.length(), spannableString.length(), 0);
-
-                                         buttonArr[index].setText(spannableString);
-                                         // buttonArr[index].setText(jsonObject.optString("Name"));
-                                        buttonArr[index].setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                GridButton_Click(equipCode, thoigian);
-                                            }
-                                        });
-                                        tableRow.addView(buttonArr[index]);
-                                        index++;
-                                    }
-                                }
-                            }
-                            */
                         }
                     }
                 },

@@ -24,11 +24,19 @@ public class AppConfigActivity extends AppCompatActivity {
 
     EditText txtIp, txtName, txtPass, txtTitle,txtChaoDG,
             txtCauCamOn,txtSizeChaoDG,txtSizeCamOn,txtTimeShowCamOn,
-            txtSlogan,txtSizeSlogan, txtDong,txtCot,txtSizeNutNext,txtSizeSTTNutNext;
+            txtActionParams,txtHexcode, txtSlogan,txtSizeSlogan, txtDong,
+            txtCot,txtSizeNutNext,txtSizeSTTNutNext;
     Spinner lvAppType;
     Button btnSave;
     SharedPreferences sharedPreferences;
-    String[] arrAppType ={"3 nút đánh giá","4 nút đánh giá","Màn hình cấp phiếu","đánh giá mẫu 3","Màn hình Quầy","Màn hình cấp phiếu 2","Màn hình cấp phiếu 3"};
+    String[] arrAppType ={"3 nút đánh giá",
+            "4 nút đánh giá",
+            "Màn hình cấp phiếu",
+            "đánh giá mẫu 3",
+            "Màn hình Quầy",
+            "Màn hình cấp phiếu 2",
+            "Màn hình cấp phiếu 3",
+            "Hiển thị quầy"};
     ArrayAdapter appTypeAdapter ;
     Integer appType = 0;
     Switch aSwitch, swSendSMS;
@@ -56,6 +64,8 @@ public class AppConfigActivity extends AppCompatActivity {
         txtDong = (EditText) findViewById(R.id.txtDong);
         txtSizeNutNext = (EditText) findViewById(R.id.txtSizeNutNext);
         txtSizeSTTNutNext = (EditText) findViewById(R.id.txtSizeSTTNutNext);
+        txtHexcode = (EditText) findViewById(R.id.txtHexcode);
+        txtActionParams = (EditText) findViewById(R.id.txtActionParams);
 
         appTypeAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrAppType);
         lvAppType = (Spinner) findViewById(R.id.spinnerAppType);
@@ -99,6 +109,8 @@ public class AppConfigActivity extends AppCompatActivity {
         txtDong.setText(sharedPreferences.getString("Dong", "200"));
         txtSizeNutNext.setText(sharedPreferences.getString("SizeNext", "200"));
         txtSizeSTTNutNext.setText(sharedPreferences.getString("SizeSTTNext", "200"));
+        txtHexcode.setText(sharedPreferences.getString("HexCode", "8B"));
+        txtActionParams.setText(sharedPreferences.getString("ActionParam", "00,00"));
 
         aSwitch.setChecked( (sharedPreferences.getString("UseQMS", "0").equals("0")?false:true));
         swSendSMS.setChecked( (sharedPreferences.getString("SendSMS", "0").equals("0")?false:true)  );
@@ -118,6 +130,14 @@ public class AppConfigActivity extends AppCompatActivity {
                     startActivity(intent);
                }
                 break;
+       case 1:
+           intent = getIntent();
+           hold =   intent.getStringExtra("hold" )  ;
+           if(hold == null && !isFirst.booleanValue() ){
+               intent = new Intent(AppConfigActivity.this, FourButtonActivity.class);
+               startActivity(intent);
+           }
+           break;
        case 5:
              intent = getIntent();
              hold =   intent.getStringExtra("hold" )  ;
@@ -126,18 +146,26 @@ public class AppConfigActivity extends AppCompatActivity {
                startActivity(intent);
            }
            break;
-         /*   case 1:
-                intent = new Intent(AppConfigActivity.this, FourButtonActivity.class);
-                startActivity(intent);
-                break;
-            case 2:
-                intent = new Intent(AppConfigActivity.this, PrintTicketActivity.class);
-                startActivity(intent);
-                break;*/
+       case 4:
+           intent = getIntent();
+           hold =   intent.getStringExtra("hold" )  ;
+           if(hold == null && !isFirst.booleanValue() ){
+               intent = new Intent(AppConfigActivity.this, CountersEventActivity.class);
+               startActivity(intent);
+           }
+           break;
             case 6:
                 intent = new Intent(AppConfigActivity.this, PrintTicket_3Activity.class);
                 startActivity(intent);
                 break;
+       case 7:
+           intent = getIntent();
+           hold =   intent.getStringExtra("hold" )  ;
+           if(hold == null && !isFirst.booleanValue() ){
+               intent = new Intent(AppConfigActivity.this, HienThiQuay.class);
+               startActivity(intent);
+           }
+           break;
         }
 
         btnSave = (Button) findViewById(R.id.btnSave);
@@ -170,6 +198,8 @@ public class AppConfigActivity extends AppCompatActivity {
                     editor.putString("SizeNext",  txtSizeNutNext.getText().toString() );
                     editor.putString("SizeSTTNext",  txtSizeSTTNutNext.getText().toString() );
                     editor.putString("TimeShowCamOn",  txtTimeShowCamOn.getText().toString() );
+                    editor.putString("HexCode",  txtHexcode.getText().toString() );
+                    editor.putString("ActionParam",  txtActionParams.getText().toString() );
                     editor.putString("UseQMS",  (aSwitch.isChecked()?"1":"0") );
                     editor.putString("SendSMS",  (swSendSMS.isChecked()?"1":"0")  );
                     editor.apply();
@@ -201,6 +231,10 @@ public class AppConfigActivity extends AppCompatActivity {
                             break;
                         case 6:
                             intent = new Intent(AppConfigActivity.this, PrintTicket_3Activity.class);
+                            startActivity(intent);
+                            break;
+                        case 7:
+                            intent = new Intent(AppConfigActivity.this, HienThiQuay.class);
                             startActivity(intent);
                             break;
                     }

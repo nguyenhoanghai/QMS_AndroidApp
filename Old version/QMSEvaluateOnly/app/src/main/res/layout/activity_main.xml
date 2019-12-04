@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+<LinearLayout
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/lbNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:gravity="top|center"
+        android:lineSpacingMultiplier="2.5"
+        android:text="7124"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/lbRequire"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="0dp"
+        android:gravity="center"
+        android:text="Đánh giá chất lượng phục vụ"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbNumber"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:weightSum="100"
+            >
+
+            <Button
+                android:id="@+id/btn1"
+                android:layout_margin="3dp"
+                android:layout_weight="25"
+                android:drawableTop="@drawable/bad"
+                android:padding="5dp"
+                android:text="Kém"
+                android:textSize="36sp" />
+
+            <Button
+
+                android:id="@+id/btn2"
+                android:layout_margin="3dp"
+                android:layout_weight="25"
+                android:drawableTop="@drawable/normal"
+                android:padding="5dp"
+                android:text="Trung bình"
+                android:textSize="36sp" />
+
+            <Button
+
+                android:id="@+id/btn3"
+                android:layout_margin="3dp"
+                android:layout_weight="25"
+                android:drawableTop="@drawable/rather"
+                android:padding="5dp"
+                android:text="khá"
+                android:textSize="36sp" />
+
+            <Button
+
+                android:id="@+id/btn4"
+                android:layout_margin="3dp"
+                android:layout_weight="25"
+                android:drawableTop="@drawable/good"
+                android:padding="5dp"
+                android:text="tốt"
+                android:textSize="36sp" />
+        </TableRow>
+
+
+    </TableLayout>
+</LinearLayout>
+
+
+
+</ScrollView>

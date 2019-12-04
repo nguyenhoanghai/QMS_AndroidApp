@@ -43,20 +43,23 @@ import java.net.URL;
 
 public class FourButtonActivity extends AppCompatActivity {
 
-    Button button, btn1, btn2, btn3, btn4;
-    String IPAddress, UserName, Password, url, TicketNumber, requireLabel;
+    Button button, btn1, btn2, btn3, btn4, btnkhac;
+    String IPAddress, UserName, Password, url, TicketNumber, requireLabel,appType;
     Integer sizeTicket = 10, sizeButton = 10, sizeRequire =10, userId, number=0;
     JsonArrayRequest jsonArrayRequest;
     JsonObjectRequest jsonRequest;
     RequestQueue requestQueue;
     private Context mContext;
-
-
-
+    Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_four_button);
+
+        //hide thanh action bar to fullscreen
+        getSupportActionBar().hide();
+
+        intent = getIntent();
 
         // Instantiate the cache
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
@@ -68,6 +71,16 @@ public class FourButtonActivity extends AppCompatActivity {
 
         //region  lấy số thứ tự đang gọi
         final TextView lbNumber = (TextView) findViewById(R.id.lbNumber);
+        lbNumber.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                intent = new Intent(FourButtonActivity.this, AppConfigActivity.class);
+                intent.putExtra("hold","1");
+                startActivity(intent);
+                return false;
+            }
+        });
+
         //lbNumber.setTextSize(TypedValue.COMPLEX_UNIT_PX, sizeTicket);
        // Typeface face = Typeface.createFromAsset(getAssets(), "fonts/DS-DIGIB.TTF");
       //  lbNumber.setTypeface(face);
@@ -128,7 +141,7 @@ public class FourButtonActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //region
-                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_1&&num=" + number + "&&isUseQMS=" + 1);
+                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_1&&num=" + number + "&&isUseQMS=" + 1+"&comment=");
                 RequestQueue rqQue = Volley.newRequestQueue(FourButtonActivity.this);
                 JsonObjectRequest jRequest = new JsonObjectRequest(
                         Request.Method.GET, str, null,
@@ -163,7 +176,7 @@ public class FourButtonActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //region
-                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_2&&num=" + number + "&&isUseQMS=" + 1);
+                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_2&&num=" + number + "&&isUseQMS=" + 1+"&comment=");
                 RequestQueue rqQue = Volley.newRequestQueue(FourButtonActivity.this);
                 JsonObjectRequest jRequest = new JsonObjectRequest(
                         Request.Method.GET, str, null,
@@ -197,7 +210,7 @@ public class FourButtonActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //region
-                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_3&&num=" + number + "&&isUseQMS=" + 1);
+                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_3&&num=" + number + "&&isUseQMS=" + 1+"&comment=");
                 RequestQueue rqQue = Volley.newRequestQueue(FourButtonActivity.this);
                 JsonObjectRequest jRequest = new JsonObjectRequest(
                         Request.Method.GET, str, null,
@@ -231,7 +244,7 @@ public class FourButtonActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //region
-                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_4&&num=" + number + "&&isUseQMS=" + 1);
+                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_4&&num=" + number + "&&isUseQMS=" + 1+"&comment=");
                 RequestQueue rqQue = Volley.newRequestQueue(FourButtonActivity.this);
                 JsonObjectRequest jRequest = new JsonObjectRequest(
                         Request.Method.GET, str, null,
@@ -258,6 +271,21 @@ public class FourButtonActivity extends AppCompatActivity {
         });
         //endregion
 
+        btnkhac = (Button)findViewById(R.id.btnkhac);
+        btnkhac.setTag(5);
+        btnkhac.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(FourButtonActivity.this, DGKhacActivity.class);
+                intent.putExtra("ip",IPAddress);
+                intent.putExtra("name",UserName);
+                intent.putExtra("pass",Password);
+                intent.putExtra("num",number.toString());
+                intent.putExtra("appType",appType);
+                startActivity(intent);
+            }
+        });
+
         SetAppConfig();
     }
 
@@ -268,7 +296,7 @@ public class FourButtonActivity extends AppCompatActivity {
             Intent intent = new Intent(FourButtonActivity.this, AppConfigActivity.class);
             startActivity(intent);
         } else {
-            String appType = sharedPreferences.getString("APP_TYPE", "1");
+             appType = sharedPreferences.getString("APP_TYPE", "1");
             Intent intent;
             switch (appType ){
                 case "0":
