@@ -25,7 +25,7 @@ public class DGKhacActivity extends AppCompatActivity {
     Intent intent;
     EditText txtComment;
     Button btnSend, btnBack;
-    String IPAddress, UserName, Password,  TicketNumber, appType;
+    String IPAddress, matb,  TicketNumber, appType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +34,7 @@ public class DGKhacActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         intent = getIntent();
        IPAddress = (String) intent.getStringExtra("ip");
-       UserName = (String)intent.getStringExtra("name");
-       Password = (String)intent.getStringExtra("pass");
+       matb = (String)intent.getStringExtra("matb");
        TicketNumber = (String)intent.getStringExtra("num");
        appType= (String)intent.getStringExtra("appType");
 
@@ -56,7 +55,7 @@ public class DGKhacActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&value=1000&num=" + TicketNumber + "&isUseQMS=" + 1+"&comment="+txtComment.getText());
+                String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + matb + "&value=1000&num=" + TicketNumber + "&isUseQMS=" + 1+"&comment="+txtComment.getText());
                 RequestQueue rqQue = Volley.newRequestQueue(DGKhacActivity.this);
                 JsonObjectRequest jRequest = new JsonObjectRequest(
                         Request.Method.GET, str, null,

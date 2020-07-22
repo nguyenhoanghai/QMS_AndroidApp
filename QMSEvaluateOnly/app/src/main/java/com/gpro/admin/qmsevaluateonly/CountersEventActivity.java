@@ -44,27 +44,28 @@ import java.util.ArrayList;
 public class CountersEventActivity extends AppCompatActivity {
 
     private static int
-            NUM_ROW = 6 ,
-            NUM_COL = 5 ,
-            FONT_SIZE=12,
-            FONT_SIZE_STT=12 ;
+            NUM_ROW = 6,
+            NUM_COL = 5,
+            FONT_SIZE = 12,
+            FONT_SIZE_STT = 12;
     Integer number = 0;
-    private  static ArrayList<Integer> requestArr,
+    private static ArrayList<Integer> requestArr,
             waitResponseButtons;
 
     RequestQueue mRequestQueue;
-    String IPAddress="" ,
-            appType="",
-            urlPath  ="",
-    hexCode ="",
-    actionParam="",
-            text1="",
-            text2="";
-    static Button [] buttonArr;
+    String IPAddress = "",
+            appType = "",
+            urlPath = "",
+            hexCode = "",
+            actionParam = "",
+            text1 = "",
+            text2 = "";
+    static Button[] buttonArr;
     JsonArrayRequest jsonArrayRequest;
     boolean isStop = false;
     SpannableString spannableString;
     JSONObject jsonObject = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,20 +86,19 @@ public class CountersEventActivity extends AppCompatActivity {
         GenerateButton();
     }
 
-    public void GridButton_Click(final String equipCode){
+    public void GridButton_Click(final String equipCode) {
         boolean isWait = false;
-        for(int i = 0; i < waitResponseButtons.size();i++ ){
-            if(Integer.parseInt(equipCode) == waitResponseButtons.get(i)){
+        for (int i = 0; i < waitResponseButtons.size(); i++) {
+            if (Integer.parseInt(equipCode) == waitResponseButtons.get(i)) {
                 isWait = true;
             }
         }
-        if(isWait == true){
-            Toast.makeText(CountersEventActivity.this,(""+equipCode+ " đã được nhấn và đang được xử lý vui lòng chờ."),Toast.LENGTH_LONG).show();
-        }
-        else {
+        if (isWait == true) {
+            Toast.makeText(CountersEventActivity.this, ("" + equipCode + " đã được nhấn và đang được xử lý vui lòng chờ."), Toast.LENGTH_LONG).show();
+        } else {
             //Toast.makeText(this,(""+equipCode+ " - 8B"),Toast.LENGTH_SHORT).show();
             waitResponseButtons.add(Integer.parseInt(equipCode));
-            String str = (IPAddress + "/api/serviceapi/CounterEvent?counterId=" + equipCode + "&action="+hexCode+"&param="+actionParam);
+            String str = (IPAddress + "/api/serviceapi/CounterEvent?counterId=" + equipCode + "&action=" + hexCode + "&param=" + actionParam);
             RequestQueue rqQue = Volley.newRequestQueue(CountersEventActivity.this);
             JsonObjectRequest jRequest = new JsonObjectRequest(
                     Request.Method.GET, str, null,
@@ -106,12 +106,12 @@ public class CountersEventActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             int index = -1;
-                            for(int i = 0; i < waitResponseButtons.size();i++ ){
-                                if(Integer.parseInt(equipCode) == waitResponseButtons.get(i)){
+                            for (int i = 0; i < waitResponseButtons.size(); i++) {
+                                if (Integer.parseInt(equipCode) == waitResponseButtons.get(i)) {
                                     index = i;
-                                     }
+                                }
                             }
-                            if(index >= 0){
+                            if (index >= 0) {
                                 waitResponseButtons.remove(index);
                             }
 
@@ -125,12 +125,12 @@ public class CountersEventActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             int index = -1;
-                            for(int i = 0; i < waitResponseButtons.size();i++ ){
-                                if(Integer.parseInt(equipCode) == waitResponseButtons.get(i)){
+                            for (int i = 0; i < waitResponseButtons.size(); i++) {
+                                if (Integer.parseInt(equipCode) == waitResponseButtons.get(i)) {
                                     index = i;
                                 }
                             }
-                            if(index >= 0){
+                            if (index >= 0) {
                                 waitResponseButtons.remove(index);
                             }
                             Toast.makeText(CountersEventActivity.this, "Không kết nối được với máy chủ.", Toast.LENGTH_SHORT).show();
@@ -144,18 +144,18 @@ public class CountersEventActivity extends AppCompatActivity {
         }
     }
 
-    public void GenerateButton(){
+    public void GenerateButton() {
         buttonArr = new Button[(NUM_ROW * NUM_COL)];
         //region tao buttons
-          urlPath = (IPAddress + "/api/serviceapi/getequipments"  );
-          jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlPath, null,
-                new Response.Listener<JSONArray>(){
+        urlPath = (IPAddress + "/api/serviceapi/getequipments");
+        jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlPath, null,
+                new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         if (response != null && response.length() > 0) {
                             int index = 0;
-                            TableLayout tb = (TableLayout)findViewById(R.id.tb);
-                            for (int i=0;i< NUM_ROW;i++){
+                            TableLayout tb = (TableLayout) findViewById(R.id.tb);
+                            for (int i = 0; i < NUM_ROW; i++) {
                                 TableRow tableRow = new TableRow(CountersEventActivity.this);
                                 tableRow.setLayoutParams(new TableLayout.LayoutParams(
                                         TableLayout.LayoutParams.MATCH_PARENT,
@@ -163,31 +163,31 @@ public class CountersEventActivity extends AppCompatActivity {
                                         1.0f
                                 ));
                                 tb.addView(tableRow);
-                                for (int ii=0;ii<NUM_COL;ii++){
+                                for (int ii = 0; ii < NUM_COL; ii++) {
                                     jsonObject = null;
                                     try {
                                         jsonObject = response.getJSONObject(index);
                                     } catch (JSONException e) {
-                                       // e.printStackTrace();
+                                        // e.printStackTrace();
                                     }
-                                    if(jsonObject != null){
+                                    if (jsonObject != null) {
                                         final int row = i, col = ii;
                                         final String equipCode = jsonObject.optString("Code");
-                                         number = jsonObject.optInt("Data");
+                                        number = jsonObject.optInt("Data");
                                         requestArr.add(Integer.parseInt(equipCode));
-                                          buttonArr[index] = new Button(CountersEventActivity.this);
+                                        buttonArr[index] = new Button(CountersEventActivity.this);
                                         buttonArr[index].setLayoutParams(new TableRow.LayoutParams(
                                                 TableRow.LayoutParams.MATCH_PARENT,
                                                 TableRow.LayoutParams.MATCH_PARENT,
                                                 1.0f
                                         ));
                                         buttonArr[index].setTextSize(FONT_SIZE);
-                                        buttonArr[index].setPadding(0,-30,0,0);
+                                        buttonArr[index].setPadding(0, -30, 0, 0);
                                         text1 = jsonObject.optString("Name");
-                                        text2 =  (number.intValue()+"");
-                                        spannableString =new SpannableString(text1 + "\n" + text2);
-                                      //  spannableString.setSpan(new ForegroundColorSpan(Color.GREEN), 0, text1.length(), 0);
-                                      spannableString.setSpan(new AbsoluteSizeSpan(FONT_SIZE), 0, text1.length(), 0);
+                                        text2 = (number.intValue() + "");
+                                        spannableString = new SpannableString(text1 + "\n" + text2);
+                                        //  spannableString.setSpan(new ForegroundColorSpan(Color.GREEN), 0, text1.length(), 0);
+                                        spannableString.setSpan(new AbsoluteSizeSpan(FONT_SIZE), 0, text1.length(), 0);
                                         spannableString.setSpan(new ForegroundColorSpan(Color.RED), text1.length(), spannableString.length(), 0);
                                         spannableString.setSpan(new AbsoluteSizeSpan(FONT_SIZE_STT), text1.length(), spannableString.length(), 0);
 
@@ -206,83 +206,83 @@ public class CountersEventActivity extends AppCompatActivity {
                             ReloadTicketInfo();
                         }
                     }
-                },new Response.ErrorListener(){
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 //  lbNumber.setText(  "ERR");
             }
         });
 
-        if(mRequestQueue != null)
+        if (mRequestQueue != null)
             mRequestQueue.add(jsonArrayRequest);
         //endregion
     }
 
-    private void ReloadTicketInfo(){
+    private void ReloadTicketInfo() {
         //region lấy so stt dang goi
-    Thread thread = new Thread() {
-        @Override
-        public void run() {
-            while (!isInterrupted()&& !isStop) {
-                try {
-                    Thread.sleep(2000);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //region tao buttons
-                            urlPath = (IPAddress + "/api/serviceapi/getequipments"  );
-                            jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlPath, null,
-                                    new Response.Listener<JSONArray>(){
-                                        @Override
-                                        public void onResponse(JSONArray response) {
-                                            //region response
-                                            if (response != null && response.length() > 0) {
-                                                for (int i=0;i< buttonArr.length;i++) {
-                                                    jsonObject = null;
-                                                    try {
-                                                        jsonObject = response.getJSONObject(i);
-                                                    } catch (JSONException e) {
-                                                      //  e.printStackTrace();
-                                                    }
-                                                    if(jsonObject != null){
-                                                         number = jsonObject.optInt("Data");
-                                                         text1 = jsonObject.optString("Name");
-                                                         text2 =  (number.intValue()+"");
-                                                         spannableString =new SpannableString(text1 + "\n" + text2);
-                                                         spannableString.setSpan(new AbsoluteSizeSpan(FONT_SIZE), 0, text1.length(), 0);
-                                                        spannableString.setSpan(new ForegroundColorSpan(Color.RED), text1.length(), spannableString.length(), 0);
-                                                        spannableString.setSpan(new AbsoluteSizeSpan(FONT_SIZE_STT), text1.length(), spannableString.length(), 0);
-                                                        buttonArr[i].setText(spannableString);
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                while (!isInterrupted() && !isStop) {
+                    try {
+                        Thread.sleep(2000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //region tao buttons
+                                urlPath = (IPAddress + "/api/serviceapi/getequipments");
+                                jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlPath, null,
+                                        new Response.Listener<JSONArray>() {
+                                            @Override
+                                            public void onResponse(JSONArray response) {
+                                                //region response
+                                                if (response != null && response.length() > 0) {
+                                                    for (int i = 0; i < buttonArr.length; i++) {
+                                                        jsonObject = null;
+                                                        try {
+                                                            jsonObject = response.getJSONObject(i);
+                                                        } catch (JSONException e) {
+                                                            //  e.printStackTrace();
+                                                        }
+                                                        if (jsonObject != null) {
+                                                            number = jsonObject.optInt("Data");
+                                                            text1 = jsonObject.optString("Name");
+                                                            text2 = (number.intValue() + "");
+                                                            spannableString = new SpannableString(text1 + "\n" + text2);
+                                                            spannableString.setSpan(new AbsoluteSizeSpan(FONT_SIZE), 0, text1.length(), 0);
+                                                            spannableString.setSpan(new ForegroundColorSpan(Color.RED), text1.length(), spannableString.length(), 0);
+                                                            spannableString.setSpan(new AbsoluteSizeSpan(FONT_SIZE_STT), text1.length(), spannableString.length(), 0);
+                                                            buttonArr[i].setText(spannableString);
+                                                        }
                                                     }
                                                 }
+                                                //endregion
                                             }
-                                            //endregion
-                                        }
-                                    },new Response.ErrorListener(){
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                }
-                            });
+                                        }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                    }
+                                });
 
-                            if(mRequestQueue != null) {
-                                jsonArrayRequest.setShouldCache(false);
-                                jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                                mRequestQueue.add(jsonArrayRequest);
+                                if (mRequestQueue != null) {
+                                    jsonArrayRequest.setShouldCache(false);
+                                    jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                                    mRequestQueue.add(jsonArrayRequest);
+                                }
+                                //endregion
                             }
-                            //endregion
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    Toast.makeText(CountersEventActivity.this, e.getMessage(), Toast.LENGTH_LONG);
+                        });
+                    } catch (InterruptedException e) {
+                        Toast.makeText(CountersEventActivity.this, e.getMessage(), Toast.LENGTH_LONG);
+                    }
                 }
             }
-        }
-    };
-    thread.start();
-    //endregion
+        };
+        thread.start();
+        //endregion
     }
 
-    private  void SetAppConfig(){
+    private void SetAppConfig() {
         SharedPreferences sharedPreferences = getSharedPreferences("QMS_SHARED_PREFERENCES", Context.MODE_PRIVATE);
         Boolean isFirst = sharedPreferences.getBoolean("IS_FIRTS_LAUNCHER", true);
         if (isFirst) {
@@ -291,7 +291,7 @@ public class CountersEventActivity extends AppCompatActivity {
         } else {
             appType = sharedPreferences.getString("APP_TYPE", "0");
             Intent intent;
-            switch (appType ){
+            switch (appType) {
                 case "1":
                     intent = new Intent(CountersEventActivity.this, FourButtonActivity.class);
                     startActivity(intent);
@@ -313,8 +313,8 @@ public class CountersEventActivity extends AppCompatActivity {
             NUM_ROW = (Integer.parseInt(sharedPreferences.getString("Dong", "5")));
             FONT_SIZE = (Integer.parseInt(sharedPreferences.getString("SizeNext", "12")));
             FONT_SIZE_STT = (Integer.parseInt(sharedPreferences.getString("SizeSTTNext", "12")));
-            hexCode =  sharedPreferences.getString("HexCode", "8B") ;
-            actionParam =  sharedPreferences.getString("ActionParam", "00,00") ;
+            hexCode = sharedPreferences.getString("HexCode", "8B");
+            actionParam = sharedPreferences.getString("ActionParam", "00,00");
         }
     }
 
@@ -323,7 +323,7 @@ public class CountersEventActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             isStop = true;
             Intent intent = new Intent(CountersEventActivity.this, AppConfigActivity.class);
-            intent.putExtra("hold","1");
+            intent.putExtra("hold", "1");
             startActivity(intent);
             return true;
         }

@@ -22,10 +22,10 @@ import android.widget.Toast;
 
 public class AppConfigActivity extends AppCompatActivity {
 
-    EditText txtIp, txtName, txtPass, txtTitle,txtChaoDG,
+    EditText txtIp,   txtTitle,txtChaoDG,txtmathietbi,
             txtCauCamOn,txtSizeChaoDG,txtSizeCamOn,txtTimeShowCamOn,
             txtActionParams,txtHexcode, txtSlogan,txtSizeSlogan, txtDong,
-            txtCot,txtSizeNutNext,txtSizeSTTNutNext;
+            txtCot,txtSizeNutNext,txtSizeSTTNutNext,txtbutheight,txtbutwidth;
     Spinner lvAppType;
     Button btnSave;
     SharedPreferences sharedPreferences;
@@ -36,7 +36,8 @@ public class AppConfigActivity extends AppCompatActivity {
             "Màn hình Quầy",
             "Màn hình cấp phiếu 2",
             "Màn hình cấp phiếu 3",
-            "Hiển thị quầy"};
+            "Hiển thị quầy",
+            "Màn hình cấp phiếu 4",};
     ArrayAdapter appTypeAdapter ;
     Integer appType = 0;
     Switch aSwitch, swSendSMS;
@@ -48,8 +49,7 @@ public class AppConfigActivity extends AppCompatActivity {
         setTitle("Cấu hình");
 
         txtIp = (EditText) findViewById(R.id.txtIp);
-        txtName = (EditText) findViewById(R.id.txtUserName);
-        txtPass = (EditText) findViewById(R.id.txtPass);
+        txtmathietbi = (EditText) findViewById(R.id.txtequipcode);
         txtTitle = (EditText) findViewById(R.id.txtTitle);
         txtCauCamOn = (EditText) findViewById(R.id.txtCauCamOn);
         txtChaoDG = (EditText) findViewById(R.id.txtChaoDanhGia);
@@ -66,6 +66,8 @@ public class AppConfigActivity extends AppCompatActivity {
         txtSizeSTTNutNext = (EditText) findViewById(R.id.txtSizeSTTNutNext);
         txtHexcode = (EditText) findViewById(R.id.txtHexcode);
         txtActionParams = (EditText) findViewById(R.id.txtActionParams);
+        txtbutheight = (EditText) findViewById(R.id.txtbutheight);
+        txtbutwidth = (EditText) findViewById(R.id.txtbutwidth);
 
         appTypeAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrAppType);
         lvAppType = (Spinner) findViewById(R.id.spinnerAppType);
@@ -95,9 +97,8 @@ public class AppConfigActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("QMS_SHARED_PREFERENCES", Context.MODE_PRIVATE);
         txtIp.setText(sharedPreferences.getString("IP", "0.0.0.0"));
-        txtName.setText(sharedPreferences.getString("UserName", "0"));
-        txtPass.setText(sharedPreferences.getString("Password", "0"));
-        txtTitle.setText(sharedPreferences.getString("APP_TITLE", "Phần mềm đánh giá GPRO"));
+        txtmathietbi.setText(sharedPreferences.getString("Equipcode", "0"));
+         txtTitle.setText(sharedPreferences.getString("APP_TITLE", "Phần mềm đánh giá GPRO"));
         txtChaoDG.setText(sharedPreferences.getString("ChaoDG", "Vui lòng đánh giá chất lượng"));
         txtCauCamOn.setText(sharedPreferences.getString("CamOn", "Xin cảm ơn quý khách."));
         txtSizeChaoDG.setText(sharedPreferences.getString("SizeChaoDG", "200"));
@@ -111,6 +112,8 @@ public class AppConfigActivity extends AppCompatActivity {
         txtSizeSTTNutNext.setText(sharedPreferences.getString("SizeSTTNext", "200"));
         txtHexcode.setText(sharedPreferences.getString("HexCode", "8B"));
         txtActionParams.setText(sharedPreferences.getString("ActionParam", "00,00"));
+        txtbutwidth.setText(sharedPreferences.getString("ButWidth", "20"));
+        txtbutheight.setText(sharedPreferences.getString("ButHeight", "20"));
 
         aSwitch.setChecked( (sharedPreferences.getString("UseQMS", "0").equals("0")?false:true));
         swSendSMS.setChecked( (sharedPreferences.getString("SendSMS", "0").equals("0")?false:true)  );
@@ -166,6 +169,14 @@ public class AppConfigActivity extends AppCompatActivity {
                startActivity(intent);
            }
            break;
+       case 8:
+           intent = getIntent();
+           hold =   intent.getStringExtra("hold" )  ;
+           if(hold == null && !isFirst.booleanValue() ){
+               intent = new Intent(AppConfigActivity.this, PrintTicket_4Activity.class);
+               startActivity(intent);
+           }
+           break;
         }
 
         btnSave = (Button) findViewById(R.id.btnSave);
@@ -175,16 +186,13 @@ public class AppConfigActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (txtIp.getText().toString() == "")
                     Toast.makeText(AppConfigActivity.this, "Vui lòng nhập địa chỉ máy chủ.", Toast.LENGTH_LONG).show();
-                else if (txtName.getText().toString() == "")
-                    Toast.makeText(AppConfigActivity.this, "Vui lòng nhập Tên tài khoản đăng nhập mặt định.", Toast.LENGTH_LONG).show();
-                else if (txtPass.getText().toString() == "")
-                    Toast.makeText(AppConfigActivity.this, "Vui lòng nhập mật khẩu dăng nhập.", Toast.LENGTH_LONG).show();
-                else {
+                else if (txtmathietbi.getText().toString() == "")
+                    Toast.makeText(AppConfigActivity.this, "Vui lòng nhập mã thiết bị.", Toast.LENGTH_LONG).show();
+                  else {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putBoolean("IS_FIRTS_LAUNCHER", false);
                     editor.putString("IP", txtIp.getText().toString());
-                    editor.putString("UserName", txtName.getText().toString());
-                    editor.putString("Password", txtPass.getText().toString());
+                    editor.putString("Equipcode", txtmathietbi.getText().toString());
                     editor.putString("APP_TYPE", appType.toString() );
                     editor.putString("APP_TITLE",  txtTitle.getText().toString() );
                     editor.putString("ChaoDG",  txtChaoDG.getText().toString() );
@@ -202,6 +210,8 @@ public class AppConfigActivity extends AppCompatActivity {
                     editor.putString("ActionParam",  txtActionParams.getText().toString() );
                     editor.putString("UseQMS",  (aSwitch.isChecked()?"1":"0") );
                     editor.putString("SendSMS",  (swSendSMS.isChecked()?"1":"0")  );
+                    editor.putString("ButWidth",  txtbutwidth.getText().toString() );
+                    editor.putString("ButHeight",  txtbutheight.getText().toString() );
                     editor.apply();
                     Intent intent;
                     switch (appType){
@@ -237,6 +247,10 @@ public class AppConfigActivity extends AppCompatActivity {
                             intent = new Intent(AppConfigActivity.this, HienThiQuay.class);
                             startActivity(intent);
                             break;
+                        case 8:
+                            intent = new Intent(AppConfigActivity.this, PrintTicket_4Activity.class);
+                            startActivity(intent);
+                            break;
                     }
                 }
             }
@@ -269,6 +283,10 @@ public class AppConfigActivity extends AppCompatActivity {
                     break;
                 case 5:
                     intent = new Intent(AppConfigActivity.this, PrintTicket_2Activity.class);
+                    startActivity(intent);
+                    break;
+                case 8:
+                    intent = new Intent(AppConfigActivity.this, PrintTicket_4Activity.class);
                     startActivity(intent);
                     break;
             }

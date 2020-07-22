@@ -1,5 +1,6 @@
 package com.gpro.admin.qmsevaluateonly;
 
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -89,12 +90,19 @@ ImageView logo;
     Button btnPlaceOrder;
     ArrayList<ServiceModel> serviceOrders = new ArrayList<>();
 
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //hide thanh action bar to fullscreen
         getSupportActionBar().hide();
         setContentView(R.layout.activity_print_ticket_2);
+
+        progressDialog = new ProgressDialog(PrintTicket_2Activity.this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setMessage("Đang tải dữ liệu...");
+        progressDialog.show();
+
         // Instantiate the cache
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
         // Set up the network to use HttpURLConnection as the HTTP client.
@@ -102,7 +110,6 @@ ImageView logo;
         // Instantiate the RequestQueue with the cache and network.
         final RequestQueue mRequestQueue = new RequestQueue(cache, network);
         mRequestQueue.start();
-
         listview = (ListView)findViewById(R.id.listview);
         lbTitle = (TextView)findViewById(R.id.lbTitle);
 
@@ -166,6 +173,7 @@ ImageView logo;
     }
 
     public   void  GridButton_Click(String serviceId, String thoigian){
+        progressDialog.show();
         //region
         String str = (IPAddress + "/api/serviceapi/PrintNewTicket?MaPhongKham=" + serviceId+"&thoigian="+thoigian  );
         RequestQueue rqQue = Volley.newRequestQueue(PrintTicket_2Activity.this);
@@ -174,6 +182,7 @@ ImageView logo;
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        progressDialog.hide();
                         Boolean rs = response.optBoolean("IsSuccess");
                         if (rs)
                             Toast.makeText(PrintTicket_2Activity.this, "Gửi yêu cầu cấp phiếu thành công.", Toast.LENGTH_SHORT).show();
@@ -184,6 +193,7 @@ ImageView logo;
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressDialog.hide();
                         Toast.makeText(PrintTicket_2Activity.this, "Gửi YC cấp phiếu : Không kết nối được với máy chủ." , Toast.LENGTH_SHORT).show();
                     }
                 }

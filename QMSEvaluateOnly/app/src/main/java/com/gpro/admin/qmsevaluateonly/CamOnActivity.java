@@ -40,7 +40,7 @@ public class CamOnActivity extends AppCompatActivity {
     TextView lbCauCamOn;
     CountDownTimer countDownTimer;
    private long time= 60000, countDown;
-    String IPAddress, UserName, Password,url;
+    String IPAddress, matb,url;
     JsonObjectRequest jsonRequest;
 Integer ticketNumber = 0,SendSMS = 0;
 Thread threadSTT = null,guiSMSThread = null;
@@ -82,8 +82,7 @@ Thread threadSTT = null,guiSMSThread = null;
         else
         {
             IPAddress = "http://" + sharedPreferences.getString("IP", "0.0.0.0");
-            UserName = sharedPreferences.getString("UserName", "0");
-            Password = sharedPreferences.getString("Password", "0");
+            matb = sharedPreferences.getString("Equipcode", "0");
 
             // Instantiate the cache
             Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
@@ -110,7 +109,7 @@ Thread threadSTT = null,guiSMSThread = null;
                         public void run() {
                             try {
                                 // Toast.makeText(CamOnActivity.this, "cam on get ", Toast.LENGTH_LONG).show();
-                                url = IPAddress + "/api/serviceapi/GetAndroidInfo?username="+UserName+"&&getSTT="+useQMS.intValue()+"&&getSMS="+SendSMS.intValue()+"&&getUserInfo=0"  ;
+                                url = IPAddress + "/api/serviceapi/GetAndroidInfo2?matb="+matb+"&&getSTT="+useQMS.intValue()+"&&getSMS="+SendSMS.intValue()+"&&getUserInfo=0"  ;
                                 jsonRequest = new JsonObjectRequest(
                                         Request.Method.GET,
                                         url,
@@ -178,7 +177,7 @@ Thread threadSTT = null,guiSMSThread = null;
     private void LaySTT(){
         try {
             //region lấy so stt dang goi
-            url = IPAddress + "/api/serviceapi/getnumber?username=" + UserName;
+            url = IPAddress + "/api/serviceapi/getnumber?username=" + 0;
             jsonRequest = new JsonObjectRequest(
                     Request.Method.GET,
                     url,

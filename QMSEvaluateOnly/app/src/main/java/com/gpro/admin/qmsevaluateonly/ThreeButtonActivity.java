@@ -57,7 +57,7 @@ import java.net.URL;
 
 public class ThreeButtonActivity extends AppCompatActivity implements MessageListener {
 
-     String IPAddress, UserName, Password, url,  requireLabel,appType;
+     String IPAddress, Mathietbi, url,  requireLabel,appType;
     Button  btn1, btn2, btn3, btnKhac ;
     TextView lbChuChay,lbTitle,lbTenNV;
     ImageView imgAvatar;
@@ -116,7 +116,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                 //region
                 if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
                     try {
-                        String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_1&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
+                        String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + Mathietbi + "&&value=1_1&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
                         RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
                         JsonObjectRequest jRequest = new JsonObjectRequest(
                                 Request.Method.GET, str, null,
@@ -168,7 +168,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
             public void onClick(View v) {
                 if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
                     //region
-                    String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_2&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
+                    String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + Mathietbi + "&&value=1_2&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
                     RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
                     JsonObjectRequest jRequest = new JsonObjectRequest(
                             Request.Method.GET, str, null,
@@ -218,7 +218,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
             public void onClick(View v) {
                 if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
                 //region
-                String str = (IPAddress + "/api/serviceapi/Evaluate?username=" + UserName + "&&value=1_3&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
+                String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + Mathietbi + "&&value=1_3&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
                 RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
                 JsonObjectRequest jRequest = new JsonObjectRequest(
                         Request.Method.GET, str, null,
@@ -267,8 +267,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
             public void onClick(View v) {
                Intent intent = new Intent(ThreeButtonActivity.this, DGKhacActivity.class);
                 intent.putExtra("ip",IPAddress);
-                intent.putExtra("name",UserName);
-                intent.putExtra("pass",Password);
+                intent.putExtra("matb",Mathietbi);
                 intent.putExtra("num",number.toString());
                 intent.putExtra("appType",appType);
                 startActivity(intent);
@@ -318,7 +317,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                         public void run() {
                             try {
                                 //  Toast.makeText(ThreeButtonActivity.this, " 3 get " , Toast.LENGTH_LONG).show();
-                                url = IPAddress + "/api/serviceapi/GetAndroidInfo?username="+UserName+"&&getSTT="+useQMS+"&&getSMS="+sendSMS.intValue()+"&&getUserInfo=1"  ;
+                                url = IPAddress + "/api/serviceapi/GetAndroidInfo2?matb="+Mathietbi+"&&getSTT="+useQMS+"&&getSMS="+sendSMS.intValue()+"&&getUserInfo=1"  ;
                                 jsonRequest = new JsonObjectRequest(
                                         Request.Method.GET,
                                         url,
@@ -397,7 +396,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
 
     public void LayThongTinNV(){
         //region lấy thông tin nhân viên
-        final String urlPath = (IPAddress + "/api/serviceapi/getuserinfo?username=" + UserName );
+        final String urlPath = (IPAddress + "/api/serviceapi/getuserinfo?username=" + 0 );
         StringRequest jRequest = new StringRequest(
                 Request.Method.GET, urlPath,
                 new Response.Listener<String>() {
@@ -464,7 +463,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                         public void run() {
                          //   Toast.makeText(ThreeButtonActivity.this, "STT", Toast.LENGTH_LONG);
                             //region lấy stt
-                            url = IPAddress + "/api/serviceapi/getnumber?username=" + UserName;
+                            url = IPAddress + "/api/serviceapi/GetSTT_Username?matb=" + Mathietbi;
                             jsonRequest = new JsonObjectRequest(
                                     Request.Method.GET,
                                     url,
@@ -478,6 +477,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                                             } else {
                                                 number = 0;
                                             }
+                                            lbTenNV.setText(response.optString("Code") );
                                         }
                                     },
                                     new Response.ErrorListener() {
@@ -656,8 +656,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                     break;
             }
             IPAddress = "http://" + sharedPreferences.getString("IP", "0.0.0.0");
-            UserName = sharedPreferences.getString("UserName", "0");
-            Password = sharedPreferences.getString("Password", "0");
+            Mathietbi = sharedPreferences.getString("Equipcode", "0");
             setTitle(sharedPreferences.getString("APP_TITLE", "Phần mềm đánh giá GPRO"));
 
             lbTitle.setText(sharedPreferences.getString("ChaoDG", "Xin vui lòng đánh giá"));
