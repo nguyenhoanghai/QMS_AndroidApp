@@ -196,7 +196,6 @@ public class PrintTicket_4Activity extends AppCompatActivity {
                     }
                     count++;
                 }
-
                 root.addView(row);
             }
         }

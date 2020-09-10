@@ -86,6 +86,7 @@ ImageView logo;
 
     private ListView listview;
     private ListAdapter listAdapter;
+    printListviewAdapter _printListviewAdapter;
     ArrayList<ServiceModel> services = new ArrayList<>();
     Button btnPlaceOrder;
     ArrayList<ServiceModel> serviceOrders = new ArrayList<>();
@@ -127,7 +128,12 @@ ImageView logo;
 
         GetAppConfig();
         new  LoadImageInternet().execute(IPAddress+"/Content/logo.png");
-        GetServices(mRequestQueue);
+         GetServices(mRequestQueue);
+
+        //for (int i = 0 ; i < 10 ; i++) {
+        //     services.add(new ServiceModel(("dich vu "+i)  , "code"+i, i));
+       // }
+       // InitListView();
     }
 
 
@@ -168,11 +174,14 @@ ImageView logo;
     }
 
     private  void  InitListView(){
-        listAdapter = new ListAdapter(this,services);
-        listview.setAdapter(listAdapter);
+       // listAdapter = new ListAdapter(this,services);
+      //  listview.setAdapter(listAdapter);
+
+        _printListviewAdapter = new printListviewAdapter(this,services);
+        listview.setAdapter(_printListviewAdapter);
     }
 
-    public   void  GridButton_Click(String serviceId, String thoigian){
+    public void  GridButton_Click(String serviceId, String thoigian){
         progressDialog.show();
         //region
         String str = (IPAddress + "/api/serviceapi/PrintNewTicket?MaPhongKham=" + serviceId+"&thoigian="+thoigian  );

@@ -9,8 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PrintTicket_4Activity"></activity>
-        <!-- auto start -->
+        <activity android:name=".InPhieuActivity"></activity>
+        <activity android:name=".printListviewActivity" />
+        <activity android:name=".PrintTicket_4Activity" /> <!-- auto start -->
         <activity android:name=".ThreeButtonActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,9 +31,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".FourButtonActivity" />
         <activity android:name=".PrintTicketActivity" />
-
         <activity android:name=".DanhGiaActivity" />
-
         <activity android:name=".CamOnActivity" />
         <activity android:name=".CountersEventActivity" />
         <activity android:name=".PrintTicket_2Activity" />
@@ -40,9 +39,11 @@
         <activity android:name=".CustomListViewActivity" />
         <activity android:name=".DGKhacActivity" />
         <activity android:name=".HienThiQuay" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
         <receiver
             android:name=".AutoStart"
             android:enabled="true"
@@ -57,9 +58,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-    </application>
+    </application> <!-- add -->
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" /> <!-- add -->
+    <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
