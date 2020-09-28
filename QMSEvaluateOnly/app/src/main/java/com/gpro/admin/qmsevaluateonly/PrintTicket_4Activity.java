@@ -67,6 +67,7 @@ public class PrintTicket_4Activity extends AppCompatActivity {
         progressDialog.setMessage("Đang tải dữ liệu...");
         progressDialog.show();
 
+
         // Instantiate the cache
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
         // Set up the network to use HttpURLConnection as the HTTP client.
@@ -180,7 +181,7 @@ public class PrintTicket_4Activity extends AppCompatActivity {
                                 BUT_HEIGHT,
                                 1.0f
                         ));
-                        buttonArr[count].setBackgroundColor(Color.BLACK);
+                       // buttonArr[count].setBackgroundColor(Color.BLACK);
                         buttonArr[count].setTextColor(Color.RED);
                         buttonArr[count].setTextSize(FONT_SIZE);
                         buttonArr[count].setPadding(8,8,8,8);

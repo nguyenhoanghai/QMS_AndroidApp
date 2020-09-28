@@ -30,5 +30,6 @@ dependencies {
     // add
     implementation 'com.android.volley:volley:1.0.0'
     implementation 'com.google.code.gson:gson:2.4'
-
+//color picker
+    implementation 'com.github.yukuku:ambilwarna:2.0.1'
 }

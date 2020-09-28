@@ -20,12 +20,14 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import yuku.ambilwarna.AmbilWarnaDialog;
+
 public class AppConfigActivity extends AppCompatActivity {
 
     EditText txtIp,   txtTitle,txtChaoDG,txtmathietbi,
             txtCauCamOn,txtSizeChaoDG,txtSizeCamOn,txtTimeShowCamOn,
             txtActionParams,txtHexcode, txtSlogan,txtSizeSlogan, txtDong,
-            txtCot,txtSizeNutNext,txtSizeSTTNutNext,txtbutheight,txtbutwidth;
+            txtCot,txtSizeNutNext,txtSizeSTTNutNext,txtbutheight,txtbutwidth,txtbutBackColor,txtbutTextColor;
     Spinner lvAppType;
     Button btnSave;
     SharedPreferences sharedPreferences;
@@ -42,6 +44,8 @@ public class AppConfigActivity extends AppCompatActivity {
     Integer appType = 0;
     Switch aSwitch, swSendSMS;
     Intent intent;
+    int butBackColor , butTextColor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +72,8 @@ public class AppConfigActivity extends AppCompatActivity {
         txtActionParams = (EditText) findViewById(R.id.txtActionParams);
         txtbutheight = (EditText) findViewById(R.id.txtbutheight);
         txtbutwidth = (EditText) findViewById(R.id.txtbutwidth);
+        txtbutBackColor = (EditText) findViewById(R.id.txtbutbackcolor);
+        txtbutTextColor = (EditText) findViewById(R.id.txtbuttextcolor);
 
         appTypeAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrAppType);
         lvAppType = (Spinner) findViewById(R.id.spinnerAppType);
@@ -114,6 +120,23 @@ public class AppConfigActivity extends AppCompatActivity {
         txtActionParams.setText(sharedPreferences.getString("ActionParam", "00,00"));
         txtbutwidth.setText(sharedPreferences.getString("ButWidth", "20"));
         txtbutheight.setText(sharedPreferences.getString("ButHeight", "20"));
+
+        txtbutBackColor.setText(sharedPreferences.getString("ButBackColor", "0"));
+        txtbutBackColor.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openColorPicker(true);
+                return false;
+            }
+        });
+        txtbutTextColor.setText(sharedPreferences.getString("ButTextColor", "0"));
+        txtbutTextColor.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openColorPicker(false);
+                return false;
+            }
+        });
 
         aSwitch.setChecked( (sharedPreferences.getString("UseQMS", "0").equals("0")?false:true));
         swSendSMS.setChecked( (sharedPreferences.getString("SendSMS", "0").equals("0")?false:true)  );
@@ -351,5 +374,34 @@ public class AppConfigActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public  void  openColorPicker(final boolean isBackground){
+        int _color;
+        if(isBackground)
+            _color = butBackColor;
+        else _color = butTextColor;
+        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, _color, false, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+            @Override
+            public void onCancel(AmbilWarnaDialog dialog) {
+
+            }
+
+            @Override
+            public void onOk(AmbilWarnaDialog dialog, int color) {
+if(isBackground){
+    butBackColor = color;
+    txtbutBackColor.setBackgroundColor(butBackColor);
+    txtbutBackColor.setText(butBackColor+"");
+}
+else
+{
+    butTextColor = color;
+    txtbutTextColor.setTextColor(butTextColor);
+    txtbutTextColor.setText(butTextColor+"");
+}
+            }
+        });
+        dialog.show();
     }
 }
