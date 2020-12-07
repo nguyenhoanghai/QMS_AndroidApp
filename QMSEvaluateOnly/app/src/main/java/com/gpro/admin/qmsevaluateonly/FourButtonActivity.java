@@ -34,6 +34,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -44,13 +46,16 @@ import java.net.URL;
 public class FourButtonActivity extends AppCompatActivity {
 
     Button button, btn1, btn2, btn3, btn4, btnkhac;
-    String IPAddress, UserName, Password, url, TicketNumber, requireLabel,appType;
-    Integer sizeTicket = 10, sizeButton = 10, sizeRequire =10, userId, number=0;
+    String IPAddress, UserName, Password, url, TicketNumber, requireLabel,appType,Mathietbi;
+    Integer sizeTicket = 10, sizeButton = 10, sizeRequire =10, userId, number=0,sendSMS=0,useQMS=0 ;
     JsonArrayRequest jsonArrayRequest;
     JsonObjectRequest jsonRequest;
     RequestQueue requestQueue;
     private Context mContext;
     Intent intent;
+    Thread guiSMSThread = null;
+    boolean isStop =false;
+    public  RequestQueue mRequestQueue= null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +75,7 @@ public class FourButtonActivity extends AppCompatActivity {
         mRequestQueue.start();
 
         //region  lấy số thứ tự đang gọi
-        final TextView lbNumber = (TextView) findViewById(R.id.lbNumber);
+        final   TextView lbNumber = (TextView) findViewById(R.id.lbNumber);
         lbNumber.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -318,7 +323,7 @@ public class FourButtonActivity extends AppCompatActivity {
             }
             IPAddress = "http://" + sharedPreferences.getString("IP", "0.0.0.0");
             UserName = sharedPreferences.getString("UserName", "0");
-            Password = sharedPreferences.getString("Password", "0");
+            Password =  sharedPreferences.getString("Password", "0");
             setTitle(sharedPreferences.getString("APP_TITLE", "Phần mềm đánh giá GPRO"));
         }
     }
@@ -416,4 +421,5 @@ public class FourButtonActivity extends AppCompatActivity {
     }
     */
     //endregion
+
 }

@@ -650,8 +650,20 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                     intent = new Intent(ThreeButtonActivity.this, CountersEventActivity.class);
                     startActivity(intent);
                     break;
+                case "5":
+                    intent = new Intent(ThreeButtonActivity.this, PrintTicket_2Activity.class);
+                    startActivity(intent);
+                    break;
+                case "6":
+                    intent = new Intent(ThreeButtonActivity.this, PrintTicket_3Activity.class);
+                    startActivity(intent);
+                    break;
                 case "7":
                     intent = new Intent(ThreeButtonActivity.this, HienThiQuay.class);
+                    startActivity(intent);
+                    break;
+                case "8":
+                    intent = new Intent(ThreeButtonActivity.this, PrintTicket_4Activity.class);
                     startActivity(intent);
                     break;
             }

@@ -24,7 +24,7 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class AppConfigActivity extends AppCompatActivity {
 
-    EditText txtIp,   txtTitle,txtChaoDG,txtmathietbi,
+    EditText txtIp,   txtTitle,txtChaoDG,txtmathietbi,txtAcc,txtPass,
             txtCauCamOn,txtSizeChaoDG,txtSizeCamOn,txtTimeShowCamOn,
             txtActionParams,txtHexcode, txtSlogan,txtSizeSlogan, txtDong,
             txtCot,txtSizeNutNext,txtSizeSTTNutNext,txtbutheight,txtbutwidth,txtbutBackColor,txtbutTextColor;
@@ -54,6 +54,8 @@ public class AppConfigActivity extends AppCompatActivity {
 
         txtIp = (EditText) findViewById(R.id.txtIp);
         txtmathietbi = (EditText) findViewById(R.id.txtequipcode);
+        txtAcc = (EditText) findViewById(R.id.txtAcc);
+        txtPass = (EditText) findViewById(R.id.txtPass);
         txtTitle = (EditText) findViewById(R.id.txtTitle);
         txtCauCamOn = (EditText) findViewById(R.id.txtCauCamOn);
         txtChaoDG = (EditText) findViewById(R.id.txtChaoDanhGia);
@@ -104,6 +106,8 @@ public class AppConfigActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("QMS_SHARED_PREFERENCES", Context.MODE_PRIVATE);
         txtIp.setText(sharedPreferences.getString("IP", "0.0.0.0"));
         txtmathietbi.setText(sharedPreferences.getString("Equipcode", "0"));
+        txtAcc.setText(sharedPreferences.getString("UserName", "0"));
+        txtPass.setText(sharedPreferences.getString("Password", "0"));
          txtTitle.setText(sharedPreferences.getString("APP_TITLE", "Phần mềm đánh giá GPRO"));
         txtChaoDG.setText(sharedPreferences.getString("ChaoDG", "Vui lòng đánh giá chất lượng"));
         txtCauCamOn.setText(sharedPreferences.getString("CamOn", "Xin cảm ơn quý khách."));
@@ -216,6 +220,8 @@ public class AppConfigActivity extends AppCompatActivity {
                     editor.putBoolean("IS_FIRTS_LAUNCHER", false);
                     editor.putString("IP", txtIp.getText().toString());
                     editor.putString("Equipcode", txtmathietbi.getText().toString());
+                    editor.putString("UserName", txtAcc.getText().toString());
+                    editor.putString("Password", txtPass.getText().toString());
                     editor.putString("APP_TYPE", appType.toString() );
                     editor.putString("APP_TITLE",  txtTitle.getText().toString() );
                     editor.putString("ChaoDG",  txtChaoDG.getText().toString() );
