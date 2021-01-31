@@ -22,9 +22,7 @@
             android:singleLine="false"
             android:textSize="30dp"
             android:text="Service Name Service Name Service Name Service Name Service Name Service Name "
- android:textColor="@color/colorAccent"
-            android:textStyle="bold"
-            />
-
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
