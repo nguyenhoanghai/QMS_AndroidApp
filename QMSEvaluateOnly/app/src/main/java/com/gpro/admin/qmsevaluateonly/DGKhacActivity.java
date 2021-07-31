@@ -1,5 +1,6 @@
 package com.gpro.admin.qmsevaluateonly;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ public class DGKhacActivity extends AppCompatActivity {
     EditText txtComment;
     Button btnSend, btnBack;
     String IPAddress, matb,  TicketNumber, appType;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +41,10 @@ public class DGKhacActivity extends AppCompatActivity {
        appType= (String)intent.getStringExtra("appType");
 
         txtComment = (EditText)findViewById(R.id.txtComment);
+
+        progressDialog = new ProgressDialog(DGKhacActivity.this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setMessage("Đang tải dữ liệu...");
 
         //region btn back
         btnBack = (Button)findViewById(R.id.btnCancel);
@@ -55,6 +61,7 @@ public class DGKhacActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog.show();
                 String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + matb + "&value=1000&num=" + TicketNumber + "&isUseQMS=" + 1+"&comment="+txtComment.getText());
                 RequestQueue rqQue = Volley.newRequestQueue(DGKhacActivity.this);
                 JsonObjectRequest jRequest = new JsonObjectRequest(
@@ -62,6 +69,7 @@ public class DGKhacActivity extends AppCompatActivity {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
+                                progressDialog.hide();
                                 Boolean rs = response.optBoolean("IsSuccess");
                                 if (rs)
                                     Toast.makeText(DGKhacActivity.this, "Xin cám ơn Quý Khách.", Toast.LENGTH_SHORT).show();
@@ -71,6 +79,7 @@ public class DGKhacActivity extends AppCompatActivity {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
+                                progressDialog.hide();
                                 Toast.makeText(DGKhacActivity.this, "Đánh giá : Không kết nối được với máy chủ." , Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -101,6 +110,10 @@ public class DGKhacActivity extends AppCompatActivity {
                 break;
             case "4":
                 intent = new Intent(DGKhacActivity.this, CountersEventActivity.class);
+                startActivity(intent);
+                break;
+            case "9":
+                intent = new Intent(DGKhacActivity.this, CounterSoftActivity.class);
                 startActivity(intent);
                 break;
         }

@@ -24,14 +24,15 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class AppConfigActivity extends AppCompatActivity {
 
-    EditText txtIp,   txtTitle,txtChaoDG,txtmathietbi,txtAcc,txtPass,
-            txtCauCamOn,txtSizeChaoDG,txtSizeCamOn,txtTimeShowCamOn,
-            txtActionParams,txtHexcode, txtSlogan,txtSizeSlogan, txtDong,
-            txtCot,txtSizeNutNext,txtSizeSTTNutNext,txtbutheight,txtbutwidth,txtbutBackColor,txtbutTextColor;
+    EditText txtIp, txtTitle, txtChaoDG, txtmathietbi, txtAcc, txtPass,
+            txtCauCamOn, txtSizeChaoDG, txtSizeCamOn, txtTimeShowCamOn,
+            txtActionParams, txtHexcode, txtSlogan, txtSizeSlogan, txtDong,
+            txtCot, txtSizeNutNext, txtSizeSTTNutNext, txtbutheight, txtbutwidth, txtbutBackColor, txtbutTextColor;
     Spinner lvAppType;
     Button btnSave;
     SharedPreferences sharedPreferences;
-    String[] arrAppType ={"3 nút đánh giá",
+    String[] arrAppType = {
+            "3 nút đánh giá",
             "4 nút đánh giá",
             "Màn hình cấp phiếu",
             "đánh giá mẫu 3",
@@ -39,12 +40,14 @@ public class AppConfigActivity extends AppCompatActivity {
             "Màn hình cấp phiếu 2",
             "Màn hình cấp phiếu 3",
             "Hiển thị quầy",
-            "Màn hình cấp phiếu 4",};
-    ArrayAdapter appTypeAdapter ;
+            "Màn hình cấp phiếu 4",
+            "Màn hình gọi số - Counter Soft",
+            "Cấp phiếu từ SMS"};
+    ArrayAdapter appTypeAdapter;
     Integer appType = 0;
     Switch aSwitch, swSendSMS;
     Intent intent;
-    int butBackColor , butTextColor;
+    int butBackColor, butTextColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +65,8 @@ public class AppConfigActivity extends AppCompatActivity {
         txtSizeChaoDG = (EditText) findViewById(R.id.txtSizeChaoDanhGia);
         txtSizeCamOn = (EditText) findViewById(R.id.txtSizeCamOn);
         txtTimeShowCamOn = (EditText) findViewById(R.id.txtTimeShowCamOn);
-        aSwitch =(Switch)findViewById(R.id.switch2) ;
-        swSendSMS =(Switch)findViewById(R.id.swSendSMS) ;
+        aSwitch = (Switch) findViewById(R.id.switch2);
+        swSendSMS = (Switch) findViewById(R.id.swSendSMS);
         txtSlogan = (EditText) findViewById(R.id.txtSlogan);
         txtSizeSlogan = (EditText) findViewById(R.id.txtSizeSlogan);
         txtCot = (EditText) findViewById(R.id.txtCot);
@@ -84,18 +87,18 @@ public class AppConfigActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 appType = position;
-              switch (position){
-                  case 0:
-                      break;
-                  case 1:
-                      break;
-                  case 2:
+                switch (position) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
 
-                      break;
-                  case 4:
-                    //  layoutCompat.setVisibility(View.VISIBLE);
-                      break;
-              }
+                        break;
+                    case 4:
+                        //  layoutCompat.setVisibility(View.VISIBLE);
+                        break;
+                }
             }
 
             @Override
@@ -108,7 +111,7 @@ public class AppConfigActivity extends AppCompatActivity {
         txtmathietbi.setText(sharedPreferences.getString("Equipcode", "0"));
         txtAcc.setText(sharedPreferences.getString("UserName", "0"));
         txtPass.setText(sharedPreferences.getString("Password", "0"));
-         txtTitle.setText(sharedPreferences.getString("APP_TITLE", "Phần mềm đánh giá GPRO"));
+        txtTitle.setText(sharedPreferences.getString("APP_TITLE", "Phần mềm đánh giá GPRO"));
         txtChaoDG.setText(sharedPreferences.getString("ChaoDG", "Vui lòng đánh giá chất lượng"));
         txtCauCamOn.setText(sharedPreferences.getString("CamOn", "Xin cảm ơn quý khách."));
         txtSizeChaoDG.setText(sharedPreferences.getString("SizeChaoDG", "200"));
@@ -142,68 +145,83 @@ public class AppConfigActivity extends AppCompatActivity {
             }
         });
 
-        aSwitch.setChecked( (sharedPreferences.getString("UseQMS", "0").equals("0")?false:true));
-        swSendSMS.setChecked( (sharedPreferences.getString("SendSMS", "0").equals("0")?false:true)  );
+        aSwitch.setChecked((sharedPreferences.getString("UseQMS", "0").equals("0") ? false : true));
+        swSendSMS.setChecked((sharedPreferences.getString("SendSMS", "0").equals("0") ? false : true));
 
         appType = Integer.parseInt(sharedPreferences.getString("APP_TYPE", "0"));
-        lvAppType.setSelection( appType  );
+        lvAppType.setSelection(appType);
 
         Boolean isFirst = sharedPreferences.getBoolean("IS_FIRTS_LAUNCHER", true);
         Intent intent;
         String hold;
-   switch (appType.intValue() ){
+        switch (appType.intValue()) {
             case 0:
-               intent = getIntent();
-                 hold =   intent.getStringExtra("hold" )  ;
-             if(hold == null && !isFirst.booleanValue() ){
-                  intent = new Intent(AppConfigActivity.this, ThreeButtonActivity.class);
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, ThreeButtonActivity.class);
                     startActivity(intent);
-               }
+                }
                 break;
-       case 1:
-           intent = getIntent();
-           hold =   intent.getStringExtra("hold" )  ;
-           if(hold == null && !isFirst.booleanValue() ){
-               intent = new Intent(AppConfigActivity.this, FourButtonActivity.class);
-               startActivity(intent);
-           }
-           break;
-       case 5:
-             intent = getIntent();
-             hold =   intent.getStringExtra("hold" )  ;
-           if(hold == null && !isFirst.booleanValue() ){
-               intent = new Intent(AppConfigActivity.this, PrintTicket_2Activity.class);
-               startActivity(intent);
-           }
-           break;
-       case 4:
-           intent = getIntent();
-           hold =   intent.getStringExtra("hold" )  ;
-           if(hold == null && !isFirst.booleanValue() ){
-               intent = new Intent(AppConfigActivity.this, CountersEventActivity.class);
-               startActivity(intent);
-           }
-           break;
+            case 1:
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, FourButtonActivity.class);
+                    startActivity(intent);
+                }
+                break;
+            case 5:
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, PrintTicket_2Activity.class);
+                    startActivity(intent);
+                }
+                break;
+            case 4:
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, CountersEventActivity.class);
+                    startActivity(intent);
+                }
+                break;
             case 6:
                 intent = new Intent(AppConfigActivity.this, PrintTicket_3Activity.class);
                 startActivity(intent);
                 break;
-       case 7:
-           intent = getIntent();
-           hold =   intent.getStringExtra("hold" )  ;
-           if(hold == null && !isFirst.booleanValue() ){
-               intent = new Intent(AppConfigActivity.this, HienThiQuay.class);
-               startActivity(intent);
-           }
-           break;
-       case 8:
-           intent = getIntent();
-           hold =   intent.getStringExtra("hold" )  ;
-           if(hold == null && !isFirst.booleanValue() ){
-               intent = new Intent(AppConfigActivity.this, PrintTicket_4Activity.class);
-               startActivity(intent);
-           }
-           break;
+            case 7:
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, HienThiQuay.class);
+                    startActivity(intent);
+                }
+                break;
+            case 8:
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, PrintTicket_4Activity.class);
+                    startActivity(intent);
+                }
+                break;
+            case 9:
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, CounterSoftActivity.class);
+                    startActivity(intent);
+                }
+            case 10:
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, ReceiveSmsActivity.class);
+                    startActivity(intent);
+                }
+                break;
         }
 
         btnSave = (Button) findViewById(R.id.btnSave);
@@ -215,35 +233,35 @@ public class AppConfigActivity extends AppCompatActivity {
                     Toast.makeText(AppConfigActivity.this, "Vui lòng nhập địa chỉ máy chủ.", Toast.LENGTH_LONG).show();
                 else if (txtmathietbi.getText().toString() == "")
                     Toast.makeText(AppConfigActivity.this, "Vui lòng nhập mã thiết bị.", Toast.LENGTH_LONG).show();
-                  else {
+                else {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putBoolean("IS_FIRTS_LAUNCHER", false);
                     editor.putString("IP", txtIp.getText().toString());
                     editor.putString("Equipcode", txtmathietbi.getText().toString());
                     editor.putString("UserName", txtAcc.getText().toString());
                     editor.putString("Password", txtPass.getText().toString());
-                    editor.putString("APP_TYPE", appType.toString() );
-                    editor.putString("APP_TITLE",  txtTitle.getText().toString() );
-                    editor.putString("ChaoDG",  txtChaoDG.getText().toString() );
-                    editor.putString("SizeChaoDG",  txtSizeChaoDG.getText().toString() );
-                    editor.putString("SizeCamOn",  txtSizeCamOn.getText().toString() );
-                    editor.putString("CamOn",  txtCauCamOn.getText().toString() );
-                    editor.putString("Slogan",  txtSlogan.getText().toString() );
-                    editor.putString("SizeSlogan",  txtSizeSlogan.getText().toString() );
-                    editor.putString("Cot",  txtCot.getText().toString() );
-                    editor.putString("Dong",  txtDong.getText().toString() );
-                    editor.putString("SizeNext",  txtSizeNutNext.getText().toString() );
-                    editor.putString("SizeSTTNext",  txtSizeSTTNutNext.getText().toString() );
-                    editor.putString("TimeShowCamOn",  txtTimeShowCamOn.getText().toString() );
-                    editor.putString("HexCode",  txtHexcode.getText().toString() );
-                    editor.putString("ActionParam",  txtActionParams.getText().toString() );
-                    editor.putString("UseQMS",  (aSwitch.isChecked()?"1":"0") );
-                    editor.putString("SendSMS",  (swSendSMS.isChecked()?"1":"0")  );
-                    editor.putString("ButWidth",  txtbutwidth.getText().toString() );
-                    editor.putString("ButHeight",  txtbutheight.getText().toString() );
+                    editor.putString("APP_TYPE", appType.toString());
+                    editor.putString("APP_TITLE", txtTitle.getText().toString());
+                    editor.putString("ChaoDG", txtChaoDG.getText().toString());
+                    editor.putString("SizeChaoDG", txtSizeChaoDG.getText().toString());
+                    editor.putString("SizeCamOn", txtSizeCamOn.getText().toString());
+                    editor.putString("CamOn", txtCauCamOn.getText().toString());
+                    editor.putString("Slogan", txtSlogan.getText().toString());
+                    editor.putString("SizeSlogan", txtSizeSlogan.getText().toString());
+                    editor.putString("Cot", txtCot.getText().toString());
+                    editor.putString("Dong", txtDong.getText().toString());
+                    editor.putString("SizeNext", txtSizeNutNext.getText().toString());
+                    editor.putString("SizeSTTNext", txtSizeSTTNutNext.getText().toString());
+                    editor.putString("TimeShowCamOn", txtTimeShowCamOn.getText().toString());
+                    editor.putString("HexCode", txtHexcode.getText().toString());
+                    editor.putString("ActionParam", txtActionParams.getText().toString());
+                    editor.putString("UseQMS", (aSwitch.isChecked() ? "1" : "0"));
+                    editor.putString("SendSMS", (swSendSMS.isChecked() ? "1" : "0"));
+                    editor.putString("ButWidth", txtbutwidth.getText().toString());
+                    editor.putString("ButHeight", txtbutheight.getText().toString());
                     editor.apply();
                     Intent intent;
-                    switch (appType){
+                    switch (appType) {
                         case 0:
                             intent = new Intent(AppConfigActivity.this, ThreeButtonActivity.class);
                             startActivity(intent);
@@ -280,17 +298,26 @@ public class AppConfigActivity extends AppCompatActivity {
                             intent = new Intent(AppConfigActivity.this, PrintTicket_4Activity.class);
                             startActivity(intent);
                             break;
+                        case 9:
+                            intent = new Intent(AppConfigActivity.this, CounterSoftActivity.class);
+                            startActivity(intent);
+                            break;
+                        case 10:
+                            intent = new Intent(AppConfigActivity.this, ReceiveSmsActivity.class);
+                            startActivity(intent);
+                            break;
                     }
                 }
             }
         });
         //endregion
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-             Intent intent;
-            switch (appType.intValue() ){
+            Intent intent;
+            switch (appType.intValue()) {
                 case 0:
                     intent = new Intent(AppConfigActivity.this, ThreeButtonActivity.class);
                     startActivity(intent);
@@ -318,11 +345,16 @@ public class AppConfigActivity extends AppCompatActivity {
                     intent = new Intent(AppConfigActivity.this, PrintTicket_4Activity.class);
                     startActivity(intent);
                     break;
+                case 9:
+                    intent = new Intent(AppConfigActivity.this, CounterSoftActivity.class);
+                    startActivity(intent);
+                    break;
             }
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
+
     //tao menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -335,8 +367,8 @@ public class AppConfigActivity extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.mEvaluate:
-                if(appType == 0)
-                intent = new Intent(AppConfigActivity.this, ThreeButtonActivity.class);
+                if (appType == 0)
+                    intent = new Intent(AppConfigActivity.this, ThreeButtonActivity.class);
                 else
                     intent = new Intent(AppConfigActivity.this, FourButtonActivity.class);
                 startActivity(intent);
@@ -382,9 +414,9 @@ public class AppConfigActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public  void  openColorPicker(final boolean isBackground){
+    public void openColorPicker(final boolean isBackground) {
         int _color;
-        if(isBackground)
+        if (isBackground)
             _color = butBackColor;
         else _color = butTextColor;
         AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, _color, false, new AmbilWarnaDialog.OnAmbilWarnaListener() {
@@ -395,17 +427,15 @@ public class AppConfigActivity extends AppCompatActivity {
 
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
-if(isBackground){
-    butBackColor = color;
-    txtbutBackColor.setBackgroundColor(butBackColor);
-    txtbutBackColor.setText(butBackColor+"");
-}
-else
-{
-    butTextColor = color;
-    txtbutTextColor.setTextColor(butTextColor);
-    txtbutTextColor.setText(butTextColor+"");
-}
+                if (isBackground) {
+                    butBackColor = color;
+                    txtbutBackColor.setBackgroundColor(butBackColor);
+                    txtbutBackColor.setText(butBackColor + "");
+                } else {
+                    butTextColor = color;
+                    txtbutTextColor.setTextColor(butTextColor);
+                    txtbutTextColor.setText(butTextColor + "");
+                }
             }
         });
         dialog.show();

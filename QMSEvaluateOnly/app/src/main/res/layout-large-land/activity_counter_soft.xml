@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CounterSoftActivity">
+
+<android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/swipeToRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="MissingConstraints"
+    >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
+
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp" >
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="100">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="70"
+                        android:orientation="vertical"
+                        tools:ignore="MissingConstraints">
+                        <TextView
+                            android:id="@+id/lbRequire"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginRight="8dp"
+                            android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:gravity="center"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
+                            android:text="hệ thống gọi số GPRO QMS - số đang gọi"
+                            android:textAllCaps="true"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15dp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/lbNumber" />
+
+                        <EditText
+                            android:id="@+id/lbCurrentNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="-15dp"
+                            android:background="@android:color/transparent"
+                            android:fontFamily="@font/diplomata"
+                            android:gravity="center"
+                            android:padding="0dp"
+                            android:inputType="number"
+                            android:text="3333"
+                            android:textColor="@android:color/holo_red_dark"
+                            android:textSize="80dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="30"
+                        android:orientation="vertical"
+                        tools:ignore="MissingConstraints">
+                        <TextView
+                            android:id="@+id/lb1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginRight="8dp"
+                            android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:gravity="center"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            android:singleLine="true"
+                            android:text="tổng khách chờ"
+                            android:textAllCaps="true"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/lbTotal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="-15dp"
+                            android:fontFamily="@font/diplomata"
+                            android:gravity="center"
+                            android:padding="0dp"
+                            android:text="999"
+                            android:textColor="#009688"
+                            android:textSize="80dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/lbWaitting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="1000 1001 1002 1003 1004 1005 1006 1007 1008 1009 2000 2001 2200 2002 2222 3333 3334 3399 9999"
+                android:textColor="#009688"
+                android:textSize="35dp"
+                android:textStyle="bold" />
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"   >
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="100">
+
+                    <Button
+                        android:id="@+id/btnNext"
+                        android:layout_margin="3dp"
+                        android:layout_weight="25"
+                        android:drawableTop="@drawable/next_64"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="10dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="10dp"
+                        android:text="Gọi tiếp theo"
+                        android:textSize="10dp" />
+
+                    <Button
+                        android:id="@+id/btnNextUT"
+                        android:layout_margin="3dp"
+                        android:layout_weight="25"
+                        android:drawableTop="@drawable/next_ut_64"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="10dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="10dp"
+                        android:text="Gọi ưu tiên"
+                        android:textSize="10dp" />
+
+                    <Button
+                        android:id="@+id/btnCallAny"
+                        android:layout_margin="3dp"
+                        android:layout_weight="25"
+                        android:drawableTop="@drawable/any_64"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="10dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="10dp"
+                        android:text="Gọi bất kỳ"
+                        android:textSize="10dp" />
+
+                    <Button
+                        android:id="@+id/btnRecall"
+                        android:layout_margin="3dp"
+                        android:layout_weight="25"
+                        android:drawableTop="@drawable/recall_64"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="10dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="10dp"
+                        android:text="Nhắc lại"
+                        android:textSize="10dp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="100">
+
+                    <Button
+                        android:id="@+id/btnTransfer"
+                        android:layout_margin="3dp"
+                        android:layout_weight="25"
+                        android:drawableTop="@drawable/transfer_64"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="10dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="10dp"
+                        android:text="Chuyển phiếu"
+                        android:textSize="10dp" />
+
+                    <Button
+                        android:id="@+id/btnDone"
+                        android:layout_margin="3dp"
+                        android:layout_weight="25"
+                        android:drawableTop="@drawable/done_64"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="10dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="10dp"
+                        android:text="hoàn tất"
+                        android:textSize="10dp" />
+
+                    <Button
+                        android:id="@+id/btnCancel"
+                        android:layout_margin="3dp"
+                        android:layout_weight="25"
+                        android:drawableTop="@drawable/delete_64"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="10dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="10dp"
+                        android:text="Hủy phiếu"
+                        android:textSize="10dp" />
+
+                    <Button
+                        android:id="@+id/btnEvaluate"
+                        android:layout_margin="3dp"
+                        android:layout_weight="25"
+                        android:drawableTop="@drawable/rating_64"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="10dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="10dp"
+                        android:text="đánh giá"
+                        android:textColor="@android:color/holo_red_dark"
+                        android:textSize="10dp" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
+</android.support.constraint.ConstraintLayout>

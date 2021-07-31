@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -57,81 +58,100 @@ import java.net.URL;
 
 public class ThreeButtonActivity extends AppCompatActivity implements MessageListener {
 
-     String IPAddress, Mathietbi, url,  requireLabel,appType;
-    Button  btn1, btn2, btn3, btnKhac ;
-    TextView lbChuChay,lbTitle,lbTenNV;
+    String IPAddress, Mathietbi, url, requireLabel, appType;
+    Button btn1, btn2, btn3, btnKhac;
+    TextView lbChuChay, lbTitle, lbTenNV;
     ImageView imgAvatar;
-    Integer useQMS=0, number =0, sendSMS=0;
+    Integer useQMS = 0, number = 0, sendSMS = 0;
     JsonObjectRequest jsonRequest;
-  private   final  int send_request_code = 1;
-  private  final  String SENT ="SMS_SENT", DELIVERED ="SMS_DELIVERED";
-  PendingIntent sendPI, deliveredPI;
-    BroadcastReceiver smsSentReceiver,smsDeliveredReceiver;
-    public  RequestQueue mRequestQueue= null;
+    private final int send_request_code = 1;
+    private final String SENT = "SMS_SENT", DELIVERED = "SMS_DELIVERED";
+    PendingIntent sendPI, deliveredPI;
+    BroadcastReceiver smsSentReceiver, smsDeliveredReceiver;
+    public RequestQueue mRequestQueue = null;
     Thread guiSMSThread = null, threadSTT = null, threadLayTTNV;
-    boolean isStop =false;
+    boolean isStop = false;
+    String backTo = "";
+    ProgressDialog progressDialog;
+    Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //hide thanh action bar to fullscreen
-         getSupportActionBar().hide();
+        getSupportActionBar().hide();
 
         setContentView(R.layout.activity_three_button);
 
-        AutoStart.bindListener(ThreeButtonActivity.this);
+         AutoStart.bindListener(ThreeButtonActivity.this);
+
+        intent = getIntent();
+        backTo = intent.getStringExtra("backTo");
+
+        progressDialog = new ProgressDialog(ThreeButtonActivity.this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setMessage("Đang tải dữ liệu...");
+        progressDialog.show();
 
         // Instantiate the cache
         final Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
         // Set up the network to use HttpURLConnection as the HTTP client.
         final Network network = new BasicNetwork(new HurlStack());
         // Instantiate the RequestQueue with the cache and network.
-         mRequestQueue = new RequestQueue(cache, network);
+        mRequestQueue = new RequestQueue(cache, network);
         mRequestQueue.start();
 
-        lbTitle = (TextView)findViewById(R.id.lbTitle);
-        lbTenNV = (TextView)findViewById(R.id.lbTenNV);
-        lbChuChay = (TextView)findViewById(R.id.lbChuChay);
+        lbTitle = (TextView) findViewById(R.id.lbTitle);
+        lbTenNV = (TextView) findViewById(R.id.lbTenNV);
+        lbChuChay = (TextView) findViewById(R.id.lbChuChay);
         lbChuChay.setSelected(true);
-        imgAvatar  = findViewById(R.id.imAvatar);
+        imgAvatar = findViewById(R.id.imAvatar);
+        //region imgAvatar setOnLongClickListener
         imgAvatar.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 mRequestQueue.stop();
                 Intent intent = new Intent(ThreeButtonActivity.this, AppConfigActivity.class);
-                intent.putExtra("hold","1");
+                intent.putExtra("hold", "1");
                 startActivity(intent);
                 return false;
             }
         });
+        //endregion
+
         SetAppConfig();
 
-       // LayThongTinNV();
-
-        //region init button 1
         btn1 = (Button) findViewById(R.id.btn1);
         btn1.setTag(1);
+        //region init button 1
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog.show();
                 //region
                 if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
                     try {
-                        String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + Mathietbi + "&&value=1_1&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
+                        String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + Mathietbi + "&&value=1_1&&num=" + number + "&&isUseQMS=" + useQMS + "&comment=");
                         RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
                         JsonObjectRequest jRequest = new JsonObjectRequest(
                                 Request.Method.GET, str, null,
                                 new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
+                                        progressDialog.hide();
                                         Boolean rs = response.optBoolean("IsSuccess");
                                         if (rs) {
                                             mRequestQueue.stop();
                                             mRequestQueue = null;
                                             isStop = true;
-                                            Intent intent = new Intent(ThreeButtonActivity.this, CamOnActivity.class);
-                                            intent.putExtra("ticket_number", number);
-                                            intent.putExtra("SendSMS", sendSMS);
-                                            intent.putExtra("AppType", appType);
+                                            if (backTo != null && backTo != "")
+                                                intent = new Intent(ThreeButtonActivity.this, CounterSoftActivity.class);
+                                            else {
+                                                intent = new Intent(ThreeButtonActivity.this, CamOnActivity.class);
+                                                intent.putExtra("ticket_number", number);
+                                                intent.putExtra("SendSMS", sendSMS);
+                                                intent.putExtra("AppType", appType);
+                                            }
                                             startActivity(intent);
                                         }
                                     }
@@ -139,51 +159,120 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                                 new Response.ErrorListener() {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
+                                        progressDialog.hide();
                                         Toast.makeText(ThreeButtonActivity.this, "Đánh giá : Không kết nối được với máy chủ.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                         );
                         jRequest.setShouldCache(false);
                         jRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                        if(mRequestQueue == null){
+                        if (mRequestQueue == null) {
                             mRequestQueue = new RequestQueue(cache, network);
                             mRequestQueue.start();
                         }
                         mRequestQueue.add(jRequest);
+                    } catch (Exception e) {
+                        progressDialog.hide();
                     }
-                    catch (Exception e){}
                     //endregion
-                }  else
+                } else {
+                    progressDialog.hide();
                     Toast.makeText(ThreeButtonActivity.this, "Hiện tại đang không có giao dịch nên không thể đánh giá được.", Toast.LENGTH_SHORT).show();
-
+                }
             }
         });
         //endregion
 
-        //region init button 2
         btn2 = (Button) findViewById(R.id.btn2);
         btn2.setTag(2);
+        //region init button 2
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog.show();
                 if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
                     //region
-                    String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + Mathietbi + "&&value=1_2&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
+                    String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + Mathietbi + "&&value=1_2&&num=" + number + "&&isUseQMS=" + useQMS + "&comment=");
                     RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
                     JsonObjectRequest jRequest = new JsonObjectRequest(
                             Request.Method.GET, str, null,
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
+                                    //region
+                                    Boolean rs = response.optBoolean("IsSuccess");
+                                    progressDialog.hide();
+                                    if (rs) {
+                                        mRequestQueue.stop();
+                                        mRequestQueue = null;
+                                        isStop = true;
+                                        if (backTo != null && backTo != "")
+                                            intent = new Intent(ThreeButtonActivity.this, CounterSoftActivity.class);
+                                        else {
+                                            intent = new Intent(ThreeButtonActivity.this, CamOnActivity.class);
+                                            intent.putExtra("ticket_number", number);
+                                            intent.putExtra("SendSMS", sendSMS);
+                                            intent.putExtra("AppType", appType);
+                                        }
+                                        startActivity(intent);
+                                    }
+                                    //endregion
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    progressDialog.hide();
+                                    Toast.makeText(ThreeButtonActivity.this, "Đánh giá : Không kết nối được với máy chủ.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                    );
+                    jRequest.setShouldCache(false);
+                    jRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    if (mRequestQueue == null) {
+                        mRequestQueue = new RequestQueue(cache, network);
+                        mRequestQueue.start();
+                    }
+                    mRequestQueue.add(jRequest);
+                    //endregion
+                } else {
+                    progressDialog.hide();
+                    Toast.makeText(ThreeButtonActivity.this, "Hiện tại đang không có giao dịch nên không thể đánh giá được.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        //endregion
+
+        btn3 = (Button) findViewById(R.id.btn3);
+        btn3.setTag(3);
+        //region init button 3
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.show();
+                if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
+                    //region
+                    String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + Mathietbi + "&&value=1_3&&num=" + number + "&&isUseQMS=" + useQMS + "&comment=");
+                    RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
+                    JsonObjectRequest jRequest = new JsonObjectRequest(
+                            Request.Method.GET, str, null,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    progressDialog.hide();
                                     Boolean rs = response.optBoolean("IsSuccess");
                                     if (rs) {
                                         mRequestQueue.stop();
                                         mRequestQueue = null;
                                         isStop = true;
-                                        Intent intent = new Intent(ThreeButtonActivity.this, CamOnActivity.class);
-                                        intent.putExtra("ticket_number",number);
-                                        intent.putExtra("SendSMS",sendSMS);
-                                        intent.putExtra("AppType", appType);
+                                        if (backTo != null && backTo != "")
+                                            intent = new Intent(ThreeButtonActivity.this, CounterSoftActivity.class);
+                                        else {
+                                            intent = new Intent(ThreeButtonActivity.this, CamOnActivity.class);
+                                            intent.putExtra("ticket_number", number);
+                                            intent.putExtra("SendSMS", sendSMS);
+                                            intent.putExtra("AppType", appType);
+                                        }
                                         startActivity(intent);
                                     }
                                 }
@@ -191,122 +280,73 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
+                                    progressDialog.hide();
                                     Toast.makeText(ThreeButtonActivity.this, "Đánh giá : Không kết nối được với máy chủ.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                     );
                     jRequest.setShouldCache(false);
                     jRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                    if(mRequestQueue == null){
+                    if (mRequestQueue == null) {
                         mRequestQueue = new RequestQueue(cache, network);
                         mRequestQueue.start();
                     }
                     mRequestQueue.add(jRequest);
                     //endregion
-                }  else
+                } else {
+                    progressDialog.hide();
                     Toast.makeText(ThreeButtonActivity.this, "Hiện tại đang không có giao dịch nên không thể đánh giá được.", Toast.LENGTH_SHORT).show();
-
+                }
             }
         });
         //endregion
 
-        //region init button 3
-        btn3 = (Button) findViewById(R.id.btn3);
-        btn3.setTag(3);
-        btn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (useQMS == 0 || (useQMS == 1 && number.intValue() != 0)) {
-                //region
-                String str = (IPAddress + "/api/serviceapi/Evaluate2?matb=" + Mathietbi + "&&value=1_3&&num=" + number + "&&isUseQMS=" + useQMS+"&comment=");
-                RequestQueue rqQue = Volley.newRequestQueue(ThreeButtonActivity.this);
-                JsonObjectRequest jRequest = new JsonObjectRequest(
-                        Request.Method.GET, str, null,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                Boolean rs = response.optBoolean("IsSuccess");
-                                if (rs) {
-                                    mRequestQueue.stop();
-                                    mRequestQueue = null;
-                                    isStop = true;
-                                    Intent intent = new Intent(ThreeButtonActivity.this, CamOnActivity.class);
-                                    intent.putExtra("ticket_number",number);
-                                    intent.putExtra("SendSMS",sendSMS);
-                                    intent.putExtra("AppType", appType);
-                                    startActivity(intent);
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(ThreeButtonActivity.this, "Đánh giá : Không kết nối được với máy chủ.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                );
-                jRequest.setShouldCache(false);
-                jRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                    if(mRequestQueue == null){
-                        mRequestQueue = new RequestQueue(cache, network);
-                        mRequestQueue.start();
-                    }
-                mRequestQueue.add(jRequest);
-                //endregion
-            }
-                else
-                    Toast.makeText(ThreeButtonActivity.this, "Hiện tại đang không có giao dịch nên không thể đánh giá được.", Toast.LENGTH_SHORT).show();
-        }
-        });
-        //endregion
-
+        btnKhac = (Button) findViewById(R.id.btnkhac);
         //region init button khac
-        btnKhac = (Button)findViewById(R.id.btnkhac);
         btnKhac.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               Intent intent = new Intent(ThreeButtonActivity.this, DGKhacActivity.class);
-                intent.putExtra("ip",IPAddress);
-                intent.putExtra("matb",Mathietbi);
-                intent.putExtra("num",number.toString());
-                intent.putExtra("appType",appType);
+                if (backTo != null && backTo != "")
+                    appType = "9";
+                Intent intent = new Intent(ThreeButtonActivity.this, DGKhacActivity.class);
+                intent.putExtra("ip", IPAddress);
+                intent.putExtra("matb", Mathietbi);
+                intent.putExtra("num", number.toString());
+                intent.putExtra("appType", appType);
                 startActivity(intent);
             }
         });
         //endregion
 
-        new LoadImageInternet().execute(IPAddress+"/Content/logo.png");
+        new LoadImageInternet().execute(IPAddress + "/Content/logo.png");
 
-        sendPI = PendingIntent.getBroadcast(this,0 ,new Intent(SENT),0);
-        deliveredPI = PendingIntent.getBroadcast(this,0 ,new Intent(DELIVERED),0);
+        sendPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
+        deliveredPI = PendingIntent.getBroadcast(this, 0, new Intent(DELIVERED), 0);
 
-        try{
+        try {
             boolean gotPermission = false;
-            if(CheckPermission(Manifest.permission.SEND_SMS))
-            {
+            if (CheckPermission(Manifest.permission.SEND_SMS)) {
                 gotPermission = true;
-            }
-            else
-            {
+            } else {
                 ActivityCompat.requestPermissions(this,
-                        new String []{Manifest.permission.SEND_SMS} ,send_request_code);
+                        new String[]{Manifest.permission.SEND_SMS}, send_request_code);
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
 
-     //  LaySTT();
+        //  LaySTT();
 
-      //  if( sendSMS ==1 && isSimSupport(this))
-      //  KiemTraGuiSMS();
+        //  if( sendSMS ==1 && isSimSupport(this))
+        //  KiemTraGuiSMS();
 
-       // if(sendSMS.intValue() ==1 && isSimSupport(this))
+        // if(sendSMS.intValue() ==1 && isSimSupport(this))
         //    sendSMS =1;
-       // else
-       //     sendSMS = 0;
+        // else
+        //     sendSMS = 0;
         GetInfoNew();
-
     }
 
-    public void GetInfoNew( ) {
+    public void GetInfoNew() {
         guiSMSThread = new Thread() {
             @Override
             public void run() {
@@ -317,7 +357,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                         public void run() {
                             try {
                                 //  Toast.makeText(ThreeButtonActivity.this, " 3 get " , Toast.LENGTH_LONG).show();
-                                url = IPAddress + "/api/serviceapi/GetAndroidInfo2?matb="+Mathietbi+"&&getSTT="+useQMS+"&&getSMS="+sendSMS.intValue()+"&&getUserInfo=1"  ;
+                                url = IPAddress + "/api/serviceapi/GetAndroidInfo2?matb=" + Mathietbi + "&&getSTT=" + useQMS + "&&getSMS=" + sendSMS.intValue() + "&&getUserInfo=1";
                                 jsonRequest = new JsonObjectRequest(
                                         Request.Method.GET,
                                         url,
@@ -332,7 +372,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                                                     //region userinfo
                                                     try {
                                                         JSONObject jsUserInfo = response.optJSONObject("UserInfo");
-                                                        if(jsUserInfo!= null){
+                                                        if (jsUserInfo != null) {
                                                             String strName = "", strPosition = "";
                                                             try {
                                                                 strName = jsUserInfo.getString("Name");
@@ -344,24 +384,24 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                                                         } else {
                                                             //  Toast.makeText(ThreeButtonActivity.this, "Không lấy được thông tin nhân viên.", Toast.LENGTH_SHORT).show();
                                                         }
+                                                    } catch (Exception e) {
                                                     }
-                                                    catch (Exception e){}
                                                     //endregion
 
                                                     // region Send SMS
 
-                                                    try{
+                                                    try {
                                                         JSONArray jsonArrSMS = response.optJSONArray("SMS");
                                                         if (jsonArrSMS != null && jsonArrSMS.length() > 0) {
                                                             // Loop through the array elements
-                                                            for(int i=0;i<jsonArrSMS.length();i++){
+                                                            for (int i = 0; i < jsonArrSMS.length(); i++) {
                                                                 String string = jsonArrSMS.getString(i).toString();
                                                                 String[] strArr = string.split(":");
-                                                                SendSMM(strArr[0].trim(),strArr[1].trim());
+                                                                SendSMM(strArr[0].trim(), strArr[1].trim());
                                                             }
                                                         }
-                                                    }catch (JSONException e){
-                                                       // e.printStackTrace();
+                                                    } catch (JSONException e) {
+                                                        // e.printStackTrace();
                                                     }
                                                     //endregion
                                                 } else {
@@ -379,30 +419,30 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
 
                                 jsonRequest.setShouldCache(false);
                                 jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                                if(mRequestQueue != null)
+                                if (mRequestQueue != null)
                                     mRequestQueue.add(jsonRequest);
-                            }catch (Exception e){
+                            } catch (Exception e) {
                             }
                         }
                     });
                 } catch (InterruptedException e) {
                     // Toast.makeText(ThreeButtonActivity.this, e.getMessage(), Toast.LENGTH_LONG);
+                } catch (Exception ex) {
                 }
-                catch (Exception ex){}
             }
         };
         guiSMSThread.start();
     }
 
-    public void LayThongTinNV(){
+    public void LayThongTinNV() {
         //region lấy thông tin nhân viên
-        final String urlPath = (IPAddress + "/api/serviceapi/getuserinfo?username=" + 0 );
+        final String urlPath = (IPAddress + "/api/serviceapi/getuserinfo?username=" + 0);
         StringRequest jRequest = new StringRequest(
                 Request.Method.GET, urlPath,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(final String response) {
-                        if(!response.equals("null")) {
+                        if (!response.equals("null")) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -427,41 +467,40 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                                         } else {
                                             Toast.makeText(ThreeButtonActivity.this, "Không lấy được thông tin nhân viên.", Toast.LENGTH_SHORT).show();
                                         }
+                                    } catch (Exception e) {
                                     }
-                                    catch (Exception e){}
                                     //endregion
                                 }
                             });
-                        }
-                        else
+                        } else
                             Toast.makeText(ThreeButtonActivity.this, "Không lấy được thông tin nhân viên.", Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(ThreeButtonActivity.this, "Đánh giá : Không kết nối được với máy chủ." , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ThreeButtonActivity.this, "Đánh giá : Không kết nối được với máy chủ.", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
         jRequest.setShouldCache(false);
-        jRequest.setRetryPolicy(new DefaultRetryPolicy(20000,20,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        if(mRequestQueue != null)
-        mRequestQueue.add(jRequest);
+        jRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        if (mRequestQueue != null)
+            mRequestQueue.add(jRequest);
         //endregion
     }
 
-    public void LaySTT( ) {
+    public void LaySTT() {
         //region lấy so stt dang goi
-          threadSTT = new Thread() {
+        threadSTT = new Thread() {
             @Override
             public void run() {
-                while ( !isStop) try {
+                while (!isStop) try {
                     Thread.sleep(2000);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                         //   Toast.makeText(ThreeButtonActivity.this, "STT", Toast.LENGTH_LONG);
+                            //   Toast.makeText(ThreeButtonActivity.this, "STT", Toast.LENGTH_LONG);
                             //region lấy stt
                             url = IPAddress + "/api/serviceapi/GetSTT_Username?matb=" + Mathietbi;
                             jsonRequest = new JsonObjectRequest(
@@ -477,7 +516,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                                             } else {
                                                 number = 0;
                                             }
-                                            lbTenNV.setText(response.optString("Code") );
+                                            lbTenNV.setText(response.optString("Code"));
                                         }
                                     },
                                     new Response.ErrorListener() {
@@ -491,25 +530,25 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
 
                             jsonRequest.setShouldCache(false);
                             jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                           if(mRequestQueue != null)
-                            mRequestQueue.add(jsonRequest);
+                            if (mRequestQueue != null)
+                                mRequestQueue.add(jsonRequest);
                         }
                     });
                 } catch (InterruptedException e) {
-                   // Toast.makeText(ThreeButtonActivity.this, e.getMessage(), Toast.LENGTH_LONG);
+                    // Toast.makeText(ThreeButtonActivity.this, e.getMessage(), Toast.LENGTH_LONG);
+                } catch (Exception ex) {
                 }
-                catch (Exception ex){}
             }
         };
-        if(useQMS==1) {
+        if (useQMS == 1) {
             threadSTT.start();
         }
         //endregion
     }
 
-    public  void KiemTraGuiSMS(){
+    public void KiemTraGuiSMS() {
         //region KiemTraGuiSMS
-       guiSMSThread = new Thread() {
+        guiSMSThread = new Thread() {
             @Override
             public void run() {
                 while (!isInterrupted() && !isStop) try {
@@ -520,103 +559,101 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                             //region lấy yc gửi tin nhắn
                             url = IPAddress + "/api/serviceapi/GetRequireSendSMS";
                             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                                   new Response.Listener<JSONArray>(){
-                                       @Override
-                                       public void onResponse(JSONArray response) {
-                                         //  Toast.makeText(ThreeButtonActivity.this, "SMS check three button.", Toast.LENGTH_LONG).show();
-                                           try{
-                                           if (response != null) {
-                                                   // Loop through the array elements
-                                                   for(int i=0;i<response.length();i++){
-                                                       String string = response.getString(i).toString();
-                                                       String[] strArr = string.split(":");
-                                                       SendSMM(strArr[0].trim(),strArr[1].trim());
-                                                      //  Toast.makeText(ThreeButtonActivity.this ,response.getString(i).toString(),Toast.LENGTH_LONG).show() ;
-                                                   }
-                                           }
-                                           }catch (JSONException e){
-                                           e.printStackTrace();
-                                       }
-                                       }
-                           },new Response.ErrorListener(){
-                               @Override
-                               public void onErrorResponse(VolleyError error) {
-                                   //  lbNumber.setText(  "ERR");
-                               }
-                           });
+                                    new Response.Listener<JSONArray>() {
+                                        @Override
+                                        public void onResponse(JSONArray response) {
+                                            //  Toast.makeText(ThreeButtonActivity.this, "SMS check three button.", Toast.LENGTH_LONG).show();
+                                            try {
+                                                if (response != null) {
+                                                    // Loop through the array elements
+                                                    for (int i = 0; i < response.length(); i++) {
+                                                        String string = response.getString(i).toString();
+                                                        String[] strArr = string.split(":");
+                                                        SendSMM(strArr[0].trim(), strArr[1].trim());
+                                                        //  Toast.makeText(ThreeButtonActivity.this ,response.getString(i).toString(),Toast.LENGTH_LONG).show() ;
+                                                    }
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    //  lbNumber.setText(  "ERR");
+                                }
+                            });
                             //endregion
                             jsonRequest.setShouldCache(false);
                             jsonRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                            if(mRequestQueue != null)
-                            mRequestQueue.add(jsonArrayRequest);
+                            if (mRequestQueue != null)
+                                mRequestQueue.add(jsonArrayRequest);
 
                         }
                     });
                 } catch (InterruptedException e) {
-                  //  Toast.makeText(ThreeButtonActivity.this, e.getMessage(), Toast.LENGTH_LONG);
+                    //  Toast.makeText(ThreeButtonActivity.this, e.getMessage(), Toast.LENGTH_LONG);
+                } catch (Exception e) {
                 }
-                catch (Exception e){}
             }
         };
         //endregion
-         if(sendSMS==1) {
+        if (sendSMS == 1) {
             guiSMSThread.start();
         }
     }
 
-    public  boolean CheckPermission(String permission){
-        int check = ContextCompat.checkSelfPermission(this,permission);
-        return  (check == PackageManager.PERMISSION_GRANTED);
+    public boolean CheckPermission(String permission) {
+        int check = ContextCompat.checkSelfPermission(this, permission);
+        return (check == PackageManager.PERMISSION_GRANTED);
     }
 
     public void SendSMM(String phoneNumber, String smsContent) {
         try {
-           // phoneNumber = "0773169414;0786399485";
+            // phoneNumber = "0773169414;0786399485";
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage( phoneNumber, null, smsContent , null, null);
+            smsManager.sendTextMessage(phoneNumber, null, smsContent, null, null);
             Toast.makeText(ThreeButtonActivity.this, "SMS sent.", Toast.LENGTH_LONG).show();
             Thread.sleep(2000);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Toast.makeText(ThreeButtonActivity.this, "SMS faild, please try again.", Toast.LENGTH_LONG).show();
-          //  e.printStackTrace();
+            //  e.printStackTrace();
         }
     }
 
     @Override
-    protected  void  onPause(){
+    protected void onPause() {
         super.onPause();
         unregisterReceiver(smsSentReceiver);
         unregisterReceiver(smsDeliveredReceiver);
     }
+
     @Override
-    protected  void  onResume() {
-    super.onResume();
+    protected void onResume() {
+        super.onResume();
         smsSentReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                switch ( getResultCode())
-                {
-                    case Activity.RESULT_OK :
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK:
                         break;
-                    case SmsManager.RESULT_ERROR_NO_SERVICE :
+                    case SmsManager.RESULT_ERROR_NO_SERVICE:
                         break;
-                    case SmsManager.RESULT_ERROR_NULL_PDU :
+                    case SmsManager.RESULT_ERROR_NULL_PDU:
                         break;
-                    case SmsManager.RESULT_ERROR_RADIO_OFF :
+                    case SmsManager.RESULT_ERROR_RADIO_OFF:
                         break;
                 }
             }
         };
 
-        smsDeliveredReceiver = new BroadcastReceiver(){
+        smsDeliveredReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                switch ( getResultCode())
-                {
-                    case Activity.RESULT_OK :
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK:
                         break;
-                    case Activity.RESULT_CANCELED :
+                    case Activity.RESULT_CANCELED:
                         break;
                 }
             }
@@ -625,22 +662,22 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
         registerReceiver(smsDeliveredReceiver, new IntentFilter(DELIVERED));
     }
 
-    private  void SetAppConfig(){
+    private void SetAppConfig() {
         SharedPreferences sharedPreferences = getSharedPreferences("QMS_SHARED_PREFERENCES", Context.MODE_PRIVATE);
         Boolean isFirst = sharedPreferences.getBoolean("IS_FIRTS_LAUNCHER", true);
         if (isFirst) {
             Intent intent = new Intent(ThreeButtonActivity.this, AppConfigActivity.class);
             startActivity(intent);
         } else {
-             appType = sharedPreferences.getString("APP_TYPE", "0");
+            appType = sharedPreferences.getString("APP_TYPE", "0");
             Intent intent;
-            switch (appType ){
+            switch (appType) {
                 case "1":
                     intent = new Intent(ThreeButtonActivity.this, FourButtonActivity.class);
                     startActivity(intent);
                     break;
                 case "2":
-                      intent = new Intent(ThreeButtonActivity.this, PrintTicketActivity.class);
+                    intent = new Intent(ThreeButtonActivity.this, PrintTicketActivity.class);
                     startActivity(intent);
                 case "3":
                     intent = new Intent(ThreeButtonActivity.this, DanhGiaActivity.class);
@@ -666,6 +703,16 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                     intent = new Intent(ThreeButtonActivity.this, PrintTicket_4Activity.class);
                     startActivity(intent);
                     break;
+
+                case "9":
+                    intent = new Intent(ThreeButtonActivity.this, CounterSoftActivity.class);
+                    startActivity(intent);
+                    break;
+                case "10":
+                    intent = new Intent(ThreeButtonActivity.this, ReceiveSmsActivity.class);
+                    startActivity(intent);
+                    break;
+
             }
             IPAddress = "http://" + sharedPreferences.getString("IP", "0.0.0.0");
             Mathietbi = sharedPreferences.getString("Equipcode", "0");
@@ -679,6 +726,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
             lbChuChay.setText(sharedPreferences.getString("Slogan", "Slogan here"));
             lbChuChay.setTextSize(Float.parseFloat(sharedPreferences.getString("SizeSlogan", "200")));
         }
+        progressDialog.hide();
     }
 
     //region tao menu
@@ -693,7 +741,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
         Intent intent;
         switch (item.getItemId()) {
             case R.id.mConfig:
-                    intent = new Intent(ThreeButtonActivity.this, AppConfigActivity.class);
+                intent = new Intent(ThreeButtonActivity.this, AppConfigActivity.class);
                 startActivity(intent);
                 break;
             case R.id.mCounterEvent:
@@ -733,16 +781,18 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
 
     @Override
     public void messageReceived(SmsMessage smsMessage) {
-        Toast.makeText(this, "New Message Received: " + smsMessage.getMessageBody(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Three button Activity: " + smsMessage.getMessageBody(), Toast.LENGTH_SHORT).show();
     }
-    private class LoadImageInternet extends AsyncTask<String,Void,Bitmap> {
+
+    private class LoadImageInternet extends AsyncTask<String, Void, Bitmap> {
         Bitmap bitmap = null;
+
         @Override
         protected Bitmap doInBackground(String... strings) {
             try {
                 URL url = new URL(strings[0]);
                 InputStream is = url.openConnection().getInputStream();
-                bitmap= BitmapFactory.decodeStream(is);
+                bitmap = BitmapFactory.decodeStream(is);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -750,19 +800,20 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
             }
             return bitmap;
         }
+
         @Override
-        protected void onPostExecute(Bitmap bitmap){
+        protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
             try {
                 //  imAvatar  = findViewById(R.id.imAvatar);
                 imgAvatar.setImageBitmap(bitmap);
                 //  Drawable top = Drawable.createFromStream(bitmap , "src");
+            } catch (Exception e) {
             }
-            catch (Exception e){}
         }
     }
 
-    public  boolean isSimSupport(Context context)    {
+    public boolean isSimSupport(Context context) {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);  //gets the current TelephonyManager
         //Toast.makeText(ThreeButtonActivity.this,( (tm.getSimState()).to),Toast.LENGTH_LONG).show();
         return !(tm.getSimState() == TelephonyManager.SIM_STATE_ABSENT);
@@ -773,7 +824,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             isStop = true;
             Intent intent = getIntent();
-            switch (appType ){
+            switch (appType) {
                 case "1":
                     intent = new Intent(ThreeButtonActivity.this, FourButtonActivity.class);
                     startActivity(intent);
