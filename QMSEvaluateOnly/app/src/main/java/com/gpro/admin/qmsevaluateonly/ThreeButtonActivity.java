@@ -78,12 +78,12 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //hide thanh action bar to fullscreen
-        getSupportActionBar().hide();
-
         setContentView(R.layout.activity_three_button);
 
-         AutoStart.bindListener(ThreeButtonActivity.this);
+        //hide thanh action bar to fullscreen
+        getSupportActionBar().hide();
+       
+        // AutoStart.bindListener(ThreeButtonActivity.this);
 
         intent = getIntent();
         backTo = intent.getStringExtra("backTo");
@@ -389,7 +389,6 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                                                     //endregion
 
                                                     // region Send SMS
-
                                                     try {
                                                         JSONArray jsonArrSMS = response.optJSONArray("SMS");
                                                         if (jsonArrSMS != null && jsonArrSMS.length() > 0) {
@@ -671,6 +670,7 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
         } else {
             appType = sharedPreferences.getString("APP_TYPE", "0");
             Intent intent;
+           /*
             switch (appType) {
                 case "1":
                     intent = new Intent(ThreeButtonActivity.this, FourButtonActivity.class);
@@ -712,8 +712,12 @@ public class ThreeButtonActivity extends AppCompatActivity implements MessageLis
                     intent = new Intent(ThreeButtonActivity.this, ReceiveSmsActivity.class);
                     startActivity(intent);
                     break;
+                case "11":
+                    break;
 
             }
+
+            */
             IPAddress = "http://" + sharedPreferences.getString("IP", "0.0.0.0");
             Mathietbi = sharedPreferences.getString("Equipcode", "0");
             setTitle(sharedPreferences.getString("APP_TITLE", "Phần mềm đánh giá GPRO"));

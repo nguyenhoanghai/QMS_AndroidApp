@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class ReceiveSmsActivity extends AppCompatActivity implements MessageList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_sms);
+        setTitle("Nhận tin nhắn lấy số");
 
         //dùng cho nhận sms
         AutoStart.bindListener(ReceiveSmsActivity.this);
@@ -82,6 +84,17 @@ public class ReceiveSmsActivity extends AppCompatActivity implements MessageList
 
         lbtotal = (TextView) findViewById(R.id.lbTotal);
         lbtotal.setText("0");
+
+        lbtotal.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mRequestQueue.stop();
+                Intent intent = new Intent(ReceiveSmsActivity.this, AppConfigActivity.class);
+                intent.putExtra("hold","1");
+                startActivity(intent);
+                return false;
+            }
+        });
         GetAppConfig();
     }
 
@@ -129,6 +142,10 @@ public class ReceiveSmsActivity extends AppCompatActivity implements MessageList
                     break;
                 case "8":
                     intent = new Intent(ReceiveSmsActivity.this, PrintTicket_4Activity.class);
+                    startActivity(intent);
+                    break;
+                case "9":
+                    intent = new Intent(ReceiveSmsActivity.this, CounterSoftActivity.class);
                     startActivity(intent);
                     break;
             }

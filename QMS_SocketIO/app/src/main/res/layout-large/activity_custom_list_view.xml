@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:layout_marginTop="5dp"
+    tools:context=".CustomListViewActivity">
+
+    <TextView
+        android:id="@+id/lbName"
+        android:layout_width="467dp"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:text="Service Name Service Name Service Name Service Name Service Name Service Name "
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="35dp"
+        app:layout_constraintEnd_toStartOf="@+id/btPrint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/txtTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:text="00:00:00"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:paddingLeft="15dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="45dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/btPrint"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/btPrint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbName" />
+
+
+    <ImageButton
+        android:id="@+id/btPrint"
+        android:layout_width="146dp"
+        android:layout_height="128dp"
+        android:layout_gravity="bottom"
+        android:background="#00ffffff"
+        android:scaleType="centerInside"
+        android:src="@drawable/printer_ticket"
+        app:layout_constraintBottom_toBottomOf="@+id/txtTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="5dp"
+        app:layout_constraintVertical_bias="0.0" />
+
+</android.support.constraint.ConstraintLayout>

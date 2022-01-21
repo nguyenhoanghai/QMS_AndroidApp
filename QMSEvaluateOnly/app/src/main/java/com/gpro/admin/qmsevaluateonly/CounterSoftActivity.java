@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,11 +36,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+
 //import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class CounterSoftActivity extends AppCompatActivity //implements MessageListener
 {
-    private TextView lbCurrentNumber, lbTotal, lbWaitting,lbTitle;
+    private TextView lbCurrentNumber, lbTotal, lbWaitting,lbTitle,lbUserName,  lbSocketStatus;
     private Button btnNext, btnNextUT, btnTransfer, btnRecall, btnCallAny, btnDone, btnCancel, btnEvaluate;
     Integer useQMS = 0, number = 0, sendSMS = 0, userId = 0;
     JsonObjectRequest jsonRequest;
@@ -54,6 +60,7 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
     ProgressDialog progressDialog;
     SwipeRefreshLayout wipeToRefresh;
     Intent intent;
+      Socket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +88,10 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
         GetAppConfig();
 
         //region decleare
+        lbUserName= (TextView) this.findViewById(R.id.lbnv);
+        lbSocketStatus= (TextView) this.findViewById(R.id.lbSocket);
+
+
         lbTitle= (TextView) this.findViewById(R.id.lbTitle);
         lbTitle.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -429,8 +440,25 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
             }
         });
         //endregion
+initSocketIO();
 
         GetInfoNew(false);
+    }
+
+    private void initSocketIO(){
+        try {
+            mSocket = IO.socket("http://192.168.1.8:3000");
+            mSocket.connect();
+            lbSocketStatus.setText("Socket Connected");
+            lbSocketStatus.setTextColor(Color.BLUE);
+            //  Log.d("success", mSocket.id());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            lbSocketStatus.setText("Socket Disconnected");
+            lbSocketStatus.setTextColor(Color.RED);
+            // Log.d("fail", "Failed to connect");
+        }
+
     }
 
     public void GetInfoNew(final Boolean isReload) {
@@ -457,22 +485,22 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                 counterWattings = (response.optString("CounterWaitings") == "null" ? "---" : response.optString("CounterWaitings"));
 
                                 //region userinfo
-                                                   /* try {
+                                                    try {
                                                         JSONObject jsUserInfo = response.optJSONObject("UserInfo");
                                                         if (jsUserInfo != null) {
                                                             String strName = "", strPosition = "";
                                                             try {
-                                                                strName = jsUserInfo.getString("Name");
-                                                                strPosition = jsUserInfo.getString("Position");
+                                                                strName = jsUserInfo.getString("UserName");
+                                                               // strPosition = jsUserInfo.getString("Position");
                                                             } catch (JSONException e) {
                                                                 e.printStackTrace();
                                                             }
-                                                            lbTenNV.setText(strPosition + " : " + strName);
+                                                            lbUserName.setText(  strName);
                                                         } else {
                                                             //  Toast.makeText(ThreeButtonActivity.this, "Không lấy được thông tin nhân viên.", Toast.LENGTH_SHORT).show();
                                                         }
                                                     } catch (Exception e) {
-                                                    }*/
+                                                    }
                                 //endregion
 
                                 // region Send SMS
@@ -541,7 +569,6 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                 wipeToRefresh.setRefreshing(false);
             }
         }
-
     }
 
     private void GetAppConfig() {

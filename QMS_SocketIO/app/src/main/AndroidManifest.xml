@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.gpro.admin.qmsevaluateonly">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".LcdPhongKham2Activity"></activity>
+        <activity android:name=".LcdPhongKham1Activity" />
+        <activity android:name=".LcdAreaActivity" />
+        <activity android:name=".ReceiveSmsActivity" />
+        <activity android:name=".TransferTicketActivity" />
+        <activity android:name=".CounterSoftActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".InPhieuActivity" />
+        <activity android:name=".printListviewActivity" />
+        <activity android:name=".PrintTicket_4Activity" /> <!-- auto start -->
+        <activity android:name=".ThreeButtonActivity" /> <!-- auto start -->
+        <activity android:name=".AppConfigActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".FourButtonActivity" />
+        <activity android:name=".PrintTicketActivity" />
+        <activity android:name=".DanhGiaActivity" />
+        <activity android:name=".CamOnActivity" />
+        <activity android:name=".CountersEventActivity" />
+        <activity android:name=".PrintTicket_2Activity" />
+        <activity android:name=".PrintTicket_3Activity" />
+        <activity android:name=".CustomListViewActivity" />
+        <activity android:name=".DGKhacActivity" />
+        <activity android:name=".HienThiQuay" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <receiver
+            android:name=".AutoStart"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.REBOOT" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+    </application>
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATEe" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+</manifest>

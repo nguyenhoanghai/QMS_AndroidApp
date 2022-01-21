@@ -9,9 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".DGKhac2Activity"></activity>
+        <activity android:name=".CamOn2Activity" />
+        <activity android:name=".ThreeButton2Activity" />
+        <activity android:name=".HienThiQuay2Activity" />
         <activity android:name=".ReceiveSmsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -20,17 +25,12 @@
         <activity android:name=".CounterSoftActivity" />
         <activity android:name=".InPhieuActivity" />
         <activity android:name=".printListviewActivity" />
-        <activity android:name=".PrintTicket_4Activity" /> <!-- auto start -->
-        <activity android:name=".ThreeButtonActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity> <!-- auto start -->
+        <activity android:name=".PrintTicket_4Activity" />
+        <activity android:name=".ThreeButtonActivity" />
         <activity android:name=".AppConfigActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

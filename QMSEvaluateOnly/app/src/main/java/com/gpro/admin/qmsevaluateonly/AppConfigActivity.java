@@ -27,9 +27,10 @@ public class AppConfigActivity extends AppCompatActivity {
     EditText txtIp, txtTitle, txtChaoDG, txtmathietbi, txtAcc, txtPass,
             txtCauCamOn, txtSizeChaoDG, txtSizeCamOn, txtTimeShowCamOn,
             txtActionParams, txtHexcode, txtSlogan, txtSizeSlogan, txtDong,
-            txtCot, txtSizeNutNext, txtSizeSTTNutNext, txtbutheight, txtbutwidth, txtbutBackColor, txtbutTextColor;
+            txtCot, txtSizeNutNext, txtSizeSTTNutNext, txtbutheight, txtbutwidth,
+             txtSizeSTT ;
     Spinner lvAppType;
-    Button btnSave;
+    Button btnSave,txtbutBackColor,txtbutTextColor,txtColorSTT, btnThanks_TextColor, btnDGTitle_TextColor ;
     SharedPreferences sharedPreferences;
     String[] arrAppType = {
             "3 nút đánh giá",
@@ -42,12 +43,13 @@ public class AppConfigActivity extends AppCompatActivity {
             "Hiển thị quầy",
             "Màn hình cấp phiếu 4",
             "Màn hình gọi số - Counter Soft",
-            "Cấp phiếu từ SMS"};
+            "Cấp phiếu từ SMS",
+            "Hiển thị quầy 2"};
     ArrayAdapter appTypeAdapter;
     Integer appType = 0;
     Switch aSwitch, swSendSMS;
     Intent intent;
-    int butBackColor, butTextColor;
+    int butBackColor, butTextColor, sttColor, thanksTextColor, dgTitleTextColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,8 @@ public class AppConfigActivity extends AppCompatActivity {
         txtChaoDG = (EditText) findViewById(R.id.txtChaoDanhGia);
         txtSizeChaoDG = (EditText) findViewById(R.id.txtSizeChaoDanhGia);
         txtSizeCamOn = (EditText) findViewById(R.id.txtSizeCamOn);
+        txtSizeSTT = (EditText) findViewById(R.id.txtSizeSTT);
+
         txtTimeShowCamOn = (EditText) findViewById(R.id.txtTimeShowCamOn);
         aSwitch = (Switch) findViewById(R.id.switch2);
         swSendSMS = (Switch) findViewById(R.id.swSendSMS);
@@ -77,8 +81,12 @@ public class AppConfigActivity extends AppCompatActivity {
         txtActionParams = (EditText) findViewById(R.id.txtActionParams);
         txtbutheight = (EditText) findViewById(R.id.txtbutheight);
         txtbutwidth = (EditText) findViewById(R.id.txtbutwidth);
-        txtbutBackColor = (EditText) findViewById(R.id.txtbutbackcolor);
-        txtbutTextColor = (EditText) findViewById(R.id.txtbuttextcolor);
+
+        txtColorSTT = (Button) findViewById(R.id.txtColorSTT);
+        txtbutBackColor = (Button) findViewById(R.id.txtButBackColor);
+        txtbutTextColor = (Button) findViewById(R.id.txtButTextColor);
+        btnThanks_TextColor = (Button) findViewById(R.id.txtColorThanks);
+        btnDGTitle_TextColor = (Button) findViewById(R.id.txtColorChaoDG);
 
         appTypeAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, arrAppType);
         lvAppType = (Spinner) findViewById(R.id.spinnerAppType);
@@ -123,25 +131,71 @@ public class AppConfigActivity extends AppCompatActivity {
         txtDong.setText(sharedPreferences.getString("Dong", "200"));
         txtSizeNutNext.setText(sharedPreferences.getString("SizeNext", "200"));
         txtSizeSTTNutNext.setText(sharedPreferences.getString("SizeSTTNext", "200"));
+        txtSizeSTT.setText(sharedPreferences.getString("SizeSTT", "200"));
+
         txtHexcode.setText(sharedPreferences.getString("HexCode", "8B"));
         txtActionParams.setText(sharedPreferences.getString("ActionParam", "00,00"));
         txtbutwidth.setText(sharedPreferences.getString("ButWidth", "20"));
         txtbutheight.setText(sharedPreferences.getString("ButHeight", "20"));
 
-        txtbutBackColor.setText(sharedPreferences.getString("ButBackColor", "0"));
-        txtbutBackColor.setOnLongClickListener(new View.OnLongClickListener() {
+        Integer color ;
+        try {
+            color  =Integer.parseInt(sharedPreferences.getString("ColorSTT", "-15859455")) ;
+             txtColorSTT.setText(color+"");
+            txtColorSTT.setTextColor(color);
+        }catch (Exception ex){}
+        txtColorSTT.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                openColorPicker(true);
-                return false;
+            public void onClick(View v) {
+                openColorPicker("ColorSTT");
             }
         });
-        txtbutTextColor.setText(sharedPreferences.getString("ButTextColor", "0"));
-        txtbutTextColor.setOnLongClickListener(new View.OnLongClickListener() {
+
+        try {
+            color  =Integer.parseInt(sharedPreferences.getString("ButBackColor", "-15859455")) ;
+            txtbutBackColor.setText(color+"");
+            txtbutBackColor.setTextColor(color);
+        }catch (Exception ex){}
+        txtbutBackColor.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                openColorPicker(false);
-                return false;
+            public void onClick(View v) {
+                openColorPicker("But_BackColor");
+            }
+        });
+
+        try {
+            color  =Integer.parseInt(sharedPreferences.getString("ButTextColor", "-15859455")) ;
+            txtbutTextColor.setText(color+"");
+            txtbutTextColor.setTextColor(color);
+        }catch (Exception ex){}
+        txtbutTextColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openColorPicker("But_TextColor");
+            }
+        });
+
+        try {
+            color  =Integer.parseInt(sharedPreferences.getString("ThanksTextColor", "-15859455")) ;
+            btnThanks_TextColor.setText(color+"");
+            btnThanks_TextColor.setTextColor(color);
+        }catch (Exception ex){}
+        btnThanks_TextColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openColorPicker("Thanks_TextColor");
+            }
+        });
+
+        try {
+            color  =Integer.parseInt(sharedPreferences.getString("DGTitle_TextColor", "-15859455")) ;
+            btnDGTitle_TextColor.setText(color+"");
+            btnDGTitle_TextColor.setTextColor(color);
+        }catch (Exception ex){}
+        btnDGTitle_TextColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openColorPicker("DGTitle_TextColor");
             }
         });
 
@@ -222,6 +276,14 @@ public class AppConfigActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 break;
+            case 11:
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, HienThiQuay2Activity.class);
+                    startActivity(intent);
+                }
+                break;
         }
 
         btnSave = (Button) findViewById(R.id.btnSave);
@@ -252,6 +314,10 @@ public class AppConfigActivity extends AppCompatActivity {
                     editor.putString("Dong", txtDong.getText().toString());
                     editor.putString("SizeNext", txtSizeNutNext.getText().toString());
                     editor.putString("SizeSTTNext", txtSizeSTTNutNext.getText().toString());
+                    editor.putString("SizeSTT", txtSizeSTT.getText().toString());
+                    editor.putString("ColorSTT", txtColorSTT.getText().toString());
+                    editor.putString("ButTextColor", txtbutTextColor.getText().toString());
+                    editor.putString("ButBackColor", txtbutBackColor.getText().toString());
                     editor.putString("TimeShowCamOn", txtTimeShowCamOn.getText().toString());
                     editor.putString("HexCode", txtHexcode.getText().toString());
                     editor.putString("ActionParam", txtActionParams.getText().toString());
@@ -259,6 +325,9 @@ public class AppConfigActivity extends AppCompatActivity {
                     editor.putString("SendSMS", (swSendSMS.isChecked() ? "1" : "0"));
                     editor.putString("ButWidth", txtbutwidth.getText().toString());
                     editor.putString("ButHeight", txtbutheight.getText().toString());
+                    editor.putString("ThanksTextColor", btnThanks_TextColor.getText().toString());
+                    editor.putString("DGTitle_TextColor", btnDGTitle_TextColor.getText().toString());
+
                     editor.apply();
                     Intent intent;
                     switch (appType) {
@@ -304,6 +373,10 @@ public class AppConfigActivity extends AppCompatActivity {
                             break;
                         case 10:
                             intent = new Intent(AppConfigActivity.this, ReceiveSmsActivity.class);
+                            startActivity(intent);
+                            break;
+                        case 11:
+                            intent = new Intent(AppConfigActivity.this, HienThiQuay2Activity.class);
                             startActivity(intent);
                             break;
                     }
@@ -414,11 +487,15 @@ public class AppConfigActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void openColorPicker(final boolean isBackground) {
-        int _color;
-        if (isBackground)
-            _color = butBackColor;
-        else _color = butTextColor;
+    public void openColorPicker(final String code) {
+        int _color = -15859455;
+        switch (code){
+            case "ColorSTT": _color = sttColor; break;
+            case "But_BackColor": _color = butBackColor; break;
+            case "But_TextColor": _color = butTextColor; break;
+            case "Thanks_TextColor": _color = thanksTextColor; break;
+            case "DGTitle_TextColor": _color = dgTitleTextColor; break;
+        }
         AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, _color, false, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {
@@ -427,17 +504,39 @@ public class AppConfigActivity extends AppCompatActivity {
 
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
-                if (isBackground) {
-                    butBackColor = color;
-                    txtbutBackColor.setBackgroundColor(butBackColor);
-                    txtbutBackColor.setText(butBackColor + "");
-                } else {
-                    butTextColor = color;
-                    txtbutTextColor.setTextColor(butTextColor);
-                    txtbutTextColor.setText(butTextColor + "");
-                }
+                Ok_Click(color, code);
             }
         });
         dialog.show();
+    }
+
+    private  void  Ok_Click(int color, String code){
+        switch (code){
+            case "ColorSTT":
+                sttColor = color;
+                txtColorSTT.setTextColor(color);
+                txtColorSTT.setText(color + "");
+                 break;
+            case "But_BackColor":
+                butBackColor = color;
+                txtbutBackColor.setTextColor(color);
+                txtbutBackColor.setText(color + "");
+                break;
+            case "But_TextColor":
+                butTextColor = color;
+                txtbutTextColor.setTextColor(color);
+                txtbutTextColor.setText(color + "");
+                break;
+            case "Thanks_TextColor":
+                thanksTextColor = color;
+                btnThanks_TextColor.setTextColor(color);
+                btnThanks_TextColor.setText(color + "");
+                break;
+            case "DGTitle_TextColor":
+                dgTitleTextColor = color;
+                btnDGTitle_TextColor.setTextColor(color);
+                btnDGTitle_TextColor.setText(color + "");
+                break;
+        }
     }
 }
