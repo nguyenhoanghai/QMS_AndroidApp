@@ -10,11 +10,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -40,6 +42,8 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -47,7 +51,7 @@ import io.socket.emitter.Emitter;
 
 //import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class CounterSoftActivity extends AppCompatActivity //implements MessageListener
+public class CounterSoftActivity extends AppCompatActivity implements ConfirmSaveDialog.DialogListener
 {
     private TextView lbCurrentNumber, lbTotal, lbWaitting, lbTitle, lbUserName, lbSocketStatus, lbStatus;
     private Button btnNext, btnNextUT, btnTransfer, btnRecall, btnCallAny, btnDone, btnCancel, btnEvaluate;
@@ -60,11 +64,12 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
     BroadcastReceiver smsSentReceiver, smsDeliveredReceiver;
     public RequestQueue mRequestQueue = null;
     Thread guiSMSThread = null, threadSTT = null, threadLayTTNV;
-    boolean isStop = false;
+    boolean isStop = false  ;
     ProgressDialog progressDialog;
     SwipeRefreshLayout wipeToRefresh;
     Intent intent;
     Socket mSocket;
+    CountDownTimer countDownTimer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,23 +95,12 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
         mRequestQueue.start();
 
         GetAppConfig();
-        InitControls();
-
-        initSocketIO();
-
-        GetInfoNew(false);
-    }
-
-    private void initSocketIO() {
-        try {
-            mSocket = IO.socket(IPNodeAddress);
-        } catch (URISyntaxException e) {
-        }
     }
 
     public void GetInfoNew(final Boolean isReload) {
      //   if (!isReload)
          //   progressDialog.show();
+
         try {
             url = IPAddress + "/api/serviceapi/GetAndroidInfo3?userName=" + userName + "&matb=" + Mathietbi + "&getSTT=" + useQMS + "&getSMS=" + sendSMS.intValue() + "&getUserInfo=1";
             //Thread.sleep(1000);
@@ -164,6 +158,17 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                 }
 
                                 lbStatus.setText("");
+
+                                if(number == 0 && totalWaitting==0 && timeRefresh<3){
+                                    lbStatus.setText("num = 0 -> reload" );
+                                    timeRefresh++;
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                    }
+                                    GetInfoNew(true);
+                                }
+                                else
                                 timeRefresh = 0;
                             }
                             else {
@@ -174,31 +179,31 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                     timeRefresh++;
                                     lbStatus.setText("Reconnect:" + timeRefresh);
                                     try {
-                                        Thread.sleep(5000);
+                                        Thread.sleep(1000);
                                     } catch (InterruptedException e) {
                                     }
                                     GetInfoNew(true);
                                 }
                             }
-
                         }
                     },
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
+
                             progressDialog.hide();
                             if (isReload) {
                                 //Toast.makeText(CounterSoftActivity.this, "Page Refresh", Toast.LENGTH_LONG).show();
                                 wipeToRefresh.setRefreshing(false);
                             }
-                            lbStatus.setText("Kết nối máy chủ thất bại code:" + error.getMessage());
+                            lbStatus.setText(timeRefresh + "- Kết nối máy chủ thất bại code:" + error.getMessage());
                             if (timeRefresh == 3)
                                 timeRefresh = 0;
                             else {
                                 timeRefresh++;
                                 lbStatus.setText("Reconnect:" + timeRefresh);
                                 try {
-                                    Thread.sleep(5000);
+                                    Thread.sleep(1000);
                                 } catch (InterruptedException e) {
                                 }
                                 GetInfoNew(true);
@@ -279,10 +284,10 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                     startActivity(intent);
                     break;
             }
-            IPAddress = "http://" + sharedPreferences.getString("IP", "0.0.0.0");
-            IPNodeAddress = "http://" + sharedPreferences.getString("SocketIP", "0.0.0.0");
+            IPAddress = "http://" + sharedPreferences.getString("IP", "138.168.31.246:92");
+            IPNodeAddress = "http://" + sharedPreferences.getString("SocketIP", "138.168.31.246:91");
             Mathietbi = sharedPreferences.getString("Equipcode", "0");
-            setTitle(sharedPreferences.getString("APP_TITLE", "Phần mềm đánh giá GPRO"));
+            setTitle(sharedPreferences.getString("APP_TITLE", "GPRO-QMS-482CS"));
 
             //lbTitle.setText(sharedPreferences.getString("ChaoDG", "Xin vui lòng đánh giá"));
             //lbTitle.setTextSize(Float.parseFloat(sharedPreferences.getString("SizeChaoDG", "200")));
@@ -292,6 +297,10 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
 
             //lbChuChay.setText(sharedPreferences.getString("Slogan", "Slogan here"));
             //lbChuChay.setTextSize(Float.parseFloat(sharedPreferences.getString("SizeSlogan", "200")));
+
+            InitControls();
+            initSocketIO();
+            GetInfoNew(false);
         }
     }
 
@@ -303,44 +312,6 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
         Toast.makeText(this, "Counter soft Activity: " + txt, Toast.LENGTH_SHORT).show();
     }
     */
-
-    private Emitter.Listener onRefresh = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    GetInfoNew(true);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onSocketConnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    lbSocketStatus.setText(mSocket.id());
-                    lbSocketStatus.setTextColor(Color.BLUE);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onSocketDisconnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    lbSocketStatus.setText("Socket Disconnected");
-                    lbSocketStatus.setTextColor(Color.RED);
-                }
-            });
-        }
-    };
 
     private void InitControls() {
         //region decleare
@@ -372,9 +343,8 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
         lbTitle.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                intent = new Intent(CounterSoftActivity.this, AppConfigActivity.class);
-                intent.putExtra("hold", "1");
-                startActivity(intent);
+                  ConfirmSaveDialog dialog = new ConfirmSaveDialog();
+                dialog.show(getSupportFragmentManager(), "Confirm");
                 return false;
             }
         });
@@ -394,15 +364,19 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                             @Override
                             public void onResponse(JSONObject response) {
                                 number = 0;
+                                progressDialog.hide();
                                 Boolean rs = response.optBoolean("IsSuccess");
                                 if (rs) {
                                     JSONObject obj = response.optJSONObject("Data_3");
                                     try {
                                         number = obj.getInt("TicketNumber");
-                                    } catch (JSONException e) {
+                                    } catch (Exception e) {
                                         progressDialog.hide();
                                         Toast.makeText(CounterSoftActivity.this, "Parse STT: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                     }
+
+                                    String _counterIds = response.optString("Data_4");
+                                    mSocket.emit("qms-system-counter-next", _counterIds);
                                 } else
                                     Toast.makeText(CounterSoftActivity.this, "Hết vé", Toast.LENGTH_LONG).show();
 
@@ -411,9 +385,9 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                     lbTotal.setText("0");
                                     lbWaitting.setText("---");
                                 }
-                                // progressDialog.hide();
+
                                 isStop = false;
-                                mSocket.emit("qms-system-counter-next", Mathietbi);
+
                                 // GetInfoNew(false);
                             }
                         },
@@ -475,6 +449,7 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     number = 0;
+                                    progressDialog.hide();
                                     Boolean rs = response.optBoolean("IsSuccess");
                                     if (rs) {
                                         JSONObject obj = response.optJSONObject("Data_3");
@@ -484,6 +459,9 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                             progressDialog.hide();
                                             Toast.makeText(CounterSoftActivity.this, "Parse STT: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                         }
+                                       // mSocket.emit("qms-system-counter-next", Mathietbi);
+                                        String _counterIds = response.optString("Data_4");
+                                        mSocket.emit("qms-system-counter-next", _counterIds);
                                     } else
                                         Toast.makeText(CounterSoftActivity.this, "Hết vé", Toast.LENGTH_LONG).show();
 
@@ -534,6 +512,7 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     number = 0;
+                                    progressDialog.hide();
                                     Boolean rs = response.optBoolean("IsSuccess");
                                     if (rs) {
                                         JSONObject obj = response.optJSONObject("Data_3");
@@ -543,6 +522,8 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                             progressDialog.hide();
                                             Toast.makeText(CounterSoftActivity.this, "Parse STT: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                         }
+                                        String _counterIds = response.optString("Data_4");
+                                        mSocket.emit("qms-system-counter-next", _counterIds);
                                     } else
                                         Toast.makeText(CounterSoftActivity.this, "Hết vé", Toast.LENGTH_LONG).show();
 
@@ -553,7 +534,6 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                     }
                                     // progressDialog.hide();
                                     isStop = false;
-                                    mSocket.emit("qms-system-counter-next", Mathietbi);
                                     //GetInfoNew(false);
                                 }
                             },
@@ -592,10 +572,12 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     number = 0;
+                                    progressDialog.hide();
                                     Boolean rs = response.optBoolean("IsSuccess");
                                     if (rs) {
                                         isStop = false;
-                                        mSocket.emit("qms-system-counter-next", Mathietbi);
+                                        String _counterIds = response.optString("Data_4");
+                                        mSocket.emit("qms-system-counter-next", _counterIds);
                                         //GetInfoNew(false);
                                     } else
                                         Toast.makeText(CounterSoftActivity.this, "Hết vé", Toast.LENGTH_LONG).show();
@@ -633,7 +615,7 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                         public void onClick(DialogInterface dialog, int id) {
                                             isStop = true;
                                             progressDialog.show();
-                                            String str = (IPAddress + "/api/serviceapi/DeleteTicket?number=" + lbCurrentNumber.getText().toString());
+                                            String str = (IPAddress + "/api/serviceapi/DeleteTicket?number=" + lbCurrentNumber.getText().toString()+ "&userId=" + userId);
                                             RequestQueue rqQue = Volley.newRequestQueue(CounterSoftActivity.this);
                                             JsonObjectRequest jRequest = new JsonObjectRequest(
                                                     Request.Method.GET, str, null,
@@ -641,14 +623,16 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
                                                         @Override
                                                         public void onResponse(JSONObject response) {
                                                             number = 0;
+                                                            progressDialog.hide();
                                                             Boolean rs = response.optBoolean("IsSuccess");
                                                             if (rs) {
                                                                 isStop = false;
-                                                                mSocket.emit("qms-system-counter-next", Mathietbi);
+                                                                String _counterIds = response.optString("Data_4");
+                                                                mSocket.emit("qms-system-counter-next", _counterIds);
                                                                 //GetInfoNew(false);
                                                             } else
                                                                 Toast.makeText(CounterSoftActivity.this, "Hủy phiếu thất bại.", Toast.LENGTH_LONG).show();
-
+                                                            progressDialog.hide();
                                                         }
                                                     },
                                                     new Response.ErrorListener() {
@@ -704,18 +688,93 @@ public class CounterSoftActivity extends AppCompatActivity //implements MessageL
         });
     }
 
+    private void initSocketIO() {
+        try {
+            mSocket = IO.socket(IPNodeAddress);
+        } catch (URISyntaxException e) {
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        mSocket.connect();
-        mSocket.on("node-counter-next", onRefresh);
-        mSocket.on(Socket.EVENT_CONNECT, onSocketConnect);
-        mSocket.on(Socket.EVENT_DISCONNECT, onSocketDisconnect);
+        if(mSocket != null) {
+            mSocket.connect();
+            mSocket.on("node-counter-next", onRefresh);
+            mSocket.on(Socket.EVENT_CONNECT, onSocketConnect);
+            mSocket.on(Socket.EVENT_DISCONNECT, onSocketDisconnect);
+
+        }
     }
+
+    private Emitter.Listener onRefresh = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    GetInfoNew(true);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onSocketConnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    lbSocketStatus.setText(mSocket.id());
+                    lbSocketStatus.setTextColor(Color.BLUE);
+
+                    //socketid|counterid|serviceId|userid
+                    mSocket.emit("android-send-device-info",mSocket.id()+"|"+Mathietbi+"||"+userId);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onSocketDisconnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    lbSocketStatus.setText("Socket Disconnected");
+                    lbSocketStatus.setTextColor(Color.RED);
+                }
+            });
+        }
+    };
 
     @Override
     protected void onStop() {
         super.onStop();
-        mSocket.disconnect();
+        if(mSocket != null) {
+            mSocket.disconnect();
+        }
     }
+
+    @Override
+    public void ApplyTexts(String password) {
+        if (password.equalsIgnoreCase("123") ) {
+            intent = new Intent(CounterSoftActivity.this, AppConfigActivity.class);
+            intent.putExtra("hold", "1");
+            startActivity(intent);
+        }
+        else
+            Toast.makeText(CounterSoftActivity.this, "Mật khẩu quản trị không đúng vui lòng nhập lại.", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+             ConfirmSaveDialog dialog = new ConfirmSaveDialog();
+             dialog.show(getSupportFragmentManager(),"Confirm");
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 }

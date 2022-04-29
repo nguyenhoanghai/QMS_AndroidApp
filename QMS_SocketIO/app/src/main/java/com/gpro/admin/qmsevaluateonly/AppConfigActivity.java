@@ -47,6 +47,7 @@ public class AppConfigActivity extends AppCompatActivity implements ConfirmSaveD
             "LCD Khu Vực",
             "LCD Phòng có 2 bàn",
             "LCD Phòng có 1 bàn",
+            "LCD Trả KQ XN",
     };
     ArrayAdapter appTypeAdapter;
     Integer appType = 0;
@@ -107,8 +108,8 @@ public class AppConfigActivity extends AppCompatActivity implements ConfirmSaveD
         });
 
         sharedPreferences = getSharedPreferences("QMS_SHARED_PREFERENCES", Context.MODE_PRIVATE);
-        txtIp.setText(sharedPreferences.getString("IP", "0.0.0.0"));
-        txtSocketIp.setText(sharedPreferences.getString("SocketIP", "0.0.0.0"));
+        txtIp.setText(sharedPreferences.getString("IP", "138.168.31.246:92"));
+        txtSocketIp.setText(sharedPreferences.getString("SocketIP", "138.168.31.246:91"));
         txtmathietbi.setText(sharedPreferences.getString("Equipcode", "1"));
         txtAcc.setText(sharedPreferences.getString("UserName", "0"));
         txtPass.setText(sharedPreferences.getString("Password", "0"));
@@ -293,6 +294,14 @@ public class AppConfigActivity extends AppCompatActivity implements ConfirmSaveD
                     startActivity(intent);
                 }
                 break;
+            case 14:
+                intent = getIntent();
+                hold = intent.getStringExtra("hold");
+                if (hold == null && !isFirst.booleanValue()) {
+                    intent = new Intent(AppConfigActivity.this, TraKQ_SocketActivity.class);
+                    startActivity(intent);
+                }
+                break;
         }
 
         btnSave = (Button) findViewById(R.id.btnSave);
@@ -403,6 +412,10 @@ public class AppConfigActivity extends AppCompatActivity implements ConfirmSaveD
                 break;
             case 13:
                 intent = new Intent(AppConfigActivity.this, LcdPhongKham1Activity.class);
+                startActivity(intent);
+                break;
+            case 14:
+                intent = new Intent(AppConfigActivity.this, TraKQ_SocketActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -564,7 +577,7 @@ public class AppConfigActivity extends AppCompatActivity implements ConfirmSaveD
 
     @Override
     public void ApplyTexts(String password) {
-        if (password.equalsIgnoreCase("gproadmin") )
+        if (password.equalsIgnoreCase("123") )
             SaveConfig();
         else
             Toast.makeText(AppConfigActivity.this, "Mật khẩu quản trị không đúng vui lòng nhập lại.", Toast.LENGTH_LONG).show();

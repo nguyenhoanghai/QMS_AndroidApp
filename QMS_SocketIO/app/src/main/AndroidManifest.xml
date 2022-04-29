@@ -9,19 +9,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LcdPhongKham2Activity"></activity>
-        <activity android:name=".LcdPhongKham1Activity" />
-        <activity android:name=".LcdAreaActivity" />
-        <activity android:name=".ReceiveSmsActivity" />
-        <activity android:name=".TransferTicketActivity" />
-        <activity android:name=".CounterSoftActivity">
+        <activity android:name=".TraKQ_SocketActivity">
+
+        </activity>
+        <activity android:name=".LcdPhongKham2Activity" >
+
+        </activity>
+        <activity android:name=".LcdPhongKham1Activity" >
+
+        </activity>
+        <activity android:name=".LcdAreaActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".ReceiveSmsActivity" />
+        <activity android:name=".TransferTicketActivity" />
+        <activity android:name=".CounterSoftActivity">
+
         </activity>
         <activity android:name=".InPhieuActivity" />
         <activity android:name=".printListviewActivity" />

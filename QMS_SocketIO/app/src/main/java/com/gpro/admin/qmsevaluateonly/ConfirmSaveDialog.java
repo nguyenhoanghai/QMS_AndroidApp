@@ -28,7 +28,7 @@ public class ConfirmSaveDialog extends AppCompatDialogFragment {
 
                     }
                 })
-                .setPositiveButton("Lưu cấu hình", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.ApplyTexts(txtPass.getText().toString());

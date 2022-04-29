@@ -53,7 +53,7 @@
                     android:layout_marginBottom="10dp"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="quầy"
+                    android:text="quầy/P.khám"
                     android:textAllCaps="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="15dp"
@@ -79,7 +79,7 @@
                     android:layout_marginBottom="10dp"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="quầy"
+                    android:text="quầy/P.Khám"
                     android:textAllCaps="true"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="15dp"
@@ -94,6 +94,7 @@
                 android:layout_height="wrap_content"/>
 
             <LinearLayout
+                android:id="@+id/panelStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="100">
@@ -114,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
                     android:paddingRight="0dp"
-                    android:text="Socket Disconnected"
+                    android:text="---"
                     android:textColor="#F31403"
                     android:textSize="10dp" />
             </LinearLayout>
@@ -305,15 +306,24 @@
                     android:id="@+id/textView8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Thông tin hiển thị (size - màu nền - màu chữ)"
+                    android:text="Thông tin hiển thị (size STT - size Tên quầy - màu nền - màu chữ)"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="18sp"
                     android:textStyle="bold"  />
                 <LinearLayout
-                    android:weightSum="3"
+                    android:weightSum="4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal" >
+                    <EditText
+                        android:id="@+id/txtContentSize_stt"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/colorAccent" />
                     <EditText
                         android:id="@+id/txtContentSize"
                         android:layout_weight="1"
