@@ -52,7 +52,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class PrintTicket_2Activity extends AppCompatActivity {
+public class PrintTicket_2Activity extends AppCompatActivity implements ConfirmSaveDialog.DialogListener{
     String IPAddress;
     Integer appType = 0,
             serviceSelectedId = 0,
@@ -118,10 +118,12 @@ ImageView logo;
         logo.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                /*
                 mRequestQueue.stop();
                 Intent intent = new Intent(PrintTicket_2Activity.this, AppConfigActivity.class);
                 intent.putExtra("hold","1");
                 startActivity(intent);
+                */
                 return false;
             }
         });
@@ -130,10 +132,6 @@ ImageView logo;
         new  LoadImageInternet().execute(IPAddress+"/Content/logo.png");
          GetServices(mRequestQueue);
 
-        //for (int i = 0 ; i < 10 ; i++) {
-        //     services.add(new ServiceModel(("dich vu "+i)  , "code"+i, i));
-       // }
-       // InitListView();
     }
 
 
@@ -158,11 +156,14 @@ ImageView logo;
                             }
                             InitListView();
                         }
+                        else
+                            progressDialog.hide();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressDialog.hide();
                         Toast.makeText(PrintTicket_2Activity.this, "Lấy Dịch vụ : Không kết nối được với máy chủ.", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -174,11 +175,9 @@ ImageView logo;
     }
 
     private  void  InitListView(){
-       // listAdapter = new ListAdapter(this,services);
-      //  listview.setAdapter(listAdapter);
-
         _printListviewAdapter = new printListviewAdapter(this,services);
         listview.setAdapter(_printListviewAdapter);
+        progressDialog.hide();
     }
 
     public void  GridButton_Click(String serviceId, String thoigian){
@@ -244,13 +243,23 @@ ImageView logo;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            isStop = true;
-            Intent intent = new Intent(PrintTicket_2Activity.this, AppConfigActivity.class);
-            intent.putExtra("hold","hold");
-            startActivity(intent);
+            ConfirmSaveDialog dialog = new ConfirmSaveDialog();
+            dialog.show(getSupportFragmentManager(),"Confirm");
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void ApplyTexts(String password) {
+        if (password.equalsIgnoreCase("123") ) {
+            isStop = true;
+               Intent intent = new Intent(PrintTicket_2Activity.this, AppConfigActivity.class);
+                intent.putExtra("hold", "hold");
+                startActivity(intent);
+        }
+        else
+            Toast.makeText(PrintTicket_2Activity.this, "Mật khẩu quản trị không đúng vui lòng nhập lại.", Toast.LENGTH_LONG).show();
     }
 
     private class LoadImageInternet extends AsyncTask<String,Void,Bitmap> {

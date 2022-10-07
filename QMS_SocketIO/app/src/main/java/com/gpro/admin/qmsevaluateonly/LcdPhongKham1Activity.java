@@ -509,7 +509,8 @@ public class LcdPhongKham1Activity extends AppCompatActivity implements ConfirmS
                 txtCounterId.setText(_value);
 
                 _value = sharedPreferences.getString("LCD_PK1_Title", "Bệnh viện đa khoa tỉnh trà vinh");
-                lbTitle.setText(_value);
+                 lbTitle.setText(_value);
+                //lbTitle.setText("UBND QUẬN SƠN TRÀ");
                 txtTitle.setText(_value);
                 _value = sharedPreferences.getString("LCD_PK1_Title_Color", "-15593237");
                 lbTitle.setTextColor(Integer.parseInt(_value));

@@ -452,6 +452,7 @@ public class LcdAreaActivity extends AppCompatActivity implements ConfirmSaveDia
 
                 _value = sharedPreferences.getString("LCD_Area_Title", "Bệnh viện đa khoa tỉnh trà vinh");
                 lbTitle.setText(_value);
+                //lbTitle.setText("UBND QUẬN SƠN TRÀ");
                 txtTitle.setText(_value);
 
                 _value = sharedPreferences.getString("LCD_Area_Title_Color", "-15593237");
