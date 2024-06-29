@@ -42,16 +42,7 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="15dp"
                 android:textStyle="bold" />
-            <TextView
-                android:id="@+id/lb11"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center|center"
-                android:padding="0dp"
-                android:text="Nguyễn văn Thạch"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="30dp"
-                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/lbProcess"
                 android:layout_width="match_parent"
